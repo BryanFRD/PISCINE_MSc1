@@ -7,6 +7,7 @@ defmodule TimeManager.Users.User do
     field :email, :string
 
     has_many :clocks, TimeManager.Clocks.Clock
+    has_many :workingtimes, TimeManager.Workingtimes.Workingtime
 
     timestamps(type: :utc_datetime)
   end

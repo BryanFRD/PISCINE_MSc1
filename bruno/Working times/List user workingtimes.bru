@@ -1,0 +1,15 @@
+meta {
+  name: List user workingtimes
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{api_url}}/workingtimes/1?start=2024-10-06%2008:00:00
+  body: none
+  auth: none
+}
+
+params:query {
+  start: 2024-10-06 08:00:00
+}

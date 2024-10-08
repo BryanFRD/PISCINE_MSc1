@@ -14,6 +14,13 @@ defmodule TimeManagerWeb.Router do
     # Clocks
     get "/clocks/:user_id", ClockController, :index
     post "/clocks/:user_id", ClockController, :create
+
+    # Workingtimes
+    get "/workingtimes/:user_id", WorkingtimeController, :index
+    get "/workingtimes/:user_id/:id", WorkingtimeController, :show
+    post "/workingtimes/:user_id", WorkingtimeController, :create
+    put "/workingtimes/:id", WorkingtimeController, :update
+    delete "/workingtimes/:id", WorkingtimeController, :delete
   end
 
   def swagger_info do
