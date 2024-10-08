@@ -17,9 +17,26 @@ defmodule TimeManager.Users do
       [%User{}, ...]
 
   """
-  def list_users do
-    Repo.all(User)
+  def list_users(params \\ %{}) do
+    query =
+      User
+      |> maybe_filter_by_username(params["username"])
+      |> maybe_filter_by_email(params["email"])
+
+    Repo.all(query)
   end
+
+  # Filter by username
+  defp maybe_filter_by_username(query, nil), do: query
+
+  defp maybe_filter_by_username(query, username),
+    do: from(u in query, where: ilike(u.username, ^"%#{username}%"))
+
+  # Filter by email
+  defp maybe_filter_by_email(query, nil), do: query
+
+  defp maybe_filter_by_email(query, email),
+    do: from(u in query, where: ilike(u.email, ^"%#{email}%"))
 
   @doc """
   Gets a single user.
