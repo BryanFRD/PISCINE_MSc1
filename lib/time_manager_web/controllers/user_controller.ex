@@ -17,11 +17,13 @@ defmodule TimeManagerWeb.UserController do
           properties do
             username(:string, "Users name", required: true)
             email(:string, "Users email", required: true)
+            id(:string, "Unique identifier", required: true)
           end
 
           example(%{
             username: "Joe",
-            email: "joe@mail.com"
+            email: "joe@mail.com",
+            id: "123"
           })
         end,
       Users:
@@ -44,8 +46,8 @@ defmodule TimeManagerWeb.UserController do
     description("List all users")
 
     parameters do
-      username(:query, :string, "Username", required: false)
-      email(:query, :string, "User's email", required: false)
+      username(:body, :string, "Username", required: false)
+      email(:body, :string, "User's email", required: false)
     end
 
     response(200, "Success", Schema.ref(:Users))
@@ -65,11 +67,11 @@ defmodule TimeManagerWeb.UserController do
     description("Create a new user")
 
     parameters do
-      username(:query, :string, "User's name", required: true)
-      email(:query, :string, "User's email", required: true)
+      username(:body, :string, "User's name", required: true)
+      email(:body, :string, "User's email", required: true)
     end
 
-    response(200, "Success", Schema.ref(:User))
+    response(201, "Successfuly created", Schema.ref(:User))
   end
 
   def show(conn, %{"id" => id}) do
@@ -111,7 +113,7 @@ defmodule TimeManagerWeb.UserController do
   end
 
   swagger_path :delete do
-    PhoenixSwagger.Path.delete("/api/users/{id}")
+    PhoenixSwagger.Path.delete("/users/{id}")
     description("Delete user")
     response(200, "Success")
   end

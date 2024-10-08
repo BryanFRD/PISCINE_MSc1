@@ -18,9 +18,10 @@ defmodule TimeManagerWeb.Router do
 
   def swagger_info do
     %{
+      basePath: "/api",
       info: %{
         version: "1.0",
-        title: "Time Manager"
+        title: "Time Manager",
       }
     }
   end

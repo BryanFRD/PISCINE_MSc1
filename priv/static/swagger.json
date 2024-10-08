@@ -1,4 +1,5 @@
 {
+  "basePath": "/api",
   "swagger": "2.0",
   "paths": {
     "/users/{id}": {
@@ -43,6 +44,20 @@
         "parameters": [],
         "operationId": "TimeManagerWeb.UserController.show",
         "description": "Show a single user"
+      },
+      "delete": {
+        "tags": [
+          "User"
+        ],
+        "summary": "",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "parameters": [],
+        "operationId": "TimeManagerWeb.UserController.delete",
+        "description": "Delete user"
       }
     },
     "/users": {
@@ -52,26 +67,26 @@
         ],
         "summary": "",
         "responses": {
-          "200": {
+          "201": {
             "schema": {
               "$ref": "#/definitions/User"
             },
-            "description": "Success"
+            "description": "Successfuly created"
           }
         },
         "parameters": [
           {
-            "type": "string",
+            "schema": "string",
             "required": true,
             "name": "username",
-            "in": "query",
+            "in": "body",
             "description": "User's name"
           },
           {
-            "type": "string",
+            "schema": "string",
             "required": true,
             "name": "email",
-            "in": "query",
+            "in": "body",
             "description": "User's email"
           }
         ],
@@ -93,17 +108,17 @@
         },
         "parameters": [
           {
-            "type": "string",
+            "schema": "string",
             "required": false,
             "name": "username",
-            "in": "query",
+            "in": "body",
             "description": "Username"
           },
           {
-            "type": "string",
+            "schema": "string",
             "required": false,
             "name": "email",
-            "in": "query",
+            "in": "body",
             "description": "User's email"
           }
         ],
@@ -111,28 +126,126 @@
         "description": "List all users"
       }
     },
-    "/api/users/{id}": {
-      "delete": {
+    "/clocks/{user_id}": {
+      "post": {
         "tags": [
-          "User"
+          "Clock"
+        ],
+        "summary": "",
+        "responses": {
+          "201": {
+            "schema": {
+              "$ref": "#/definitions/Clock"
+            },
+            "description": "Successfuly created"
+          }
+        },
+        "parameters": [
+          {
+            "type": "string",
+            "required": true,
+            "name": "user_id",
+            "in": "path",
+            "description": "User's ID"
+          },
+          {
+            "schema": "naive_datetime",
+            "required": true,
+            "name": "time",
+            "in": "body",
+            "description": "Timestamp for clock"
+          },
+          {
+            "schema": "boolean",
+            "required": true,
+            "name": "status",
+            "in": "body",
+            "description": "Clock in or out"
+          }
+        ],
+        "operationId": "TimeManagerWeb.ClockController.create",
+        "description": "Create a clock for a user"
+      },
+      "get": {
+        "tags": [
+          "Clock"
         ],
         "summary": "",
         "responses": {
           "200": {
+            "schema": {
+              "$ref": "#/definitions/Clocks"
+            },
             "description": "Success"
           }
         },
-        "parameters": [],
-        "operationId": "TimeManagerWeb.UserController.delete",
-        "description": "Delete user"
+        "parameters": [
+          {
+            "type": "string",
+            "required": true,
+            "name": "user_id",
+            "in": "path",
+            "description": "User's ID"
+          }
+        ],
+        "operationId": "TimeManagerWeb.ClockController.index",
+        "description": "Show all user's clocks"
       }
     }
   },
   "definitions": {
+    "Clock": {
+      "type": "object",
+      "title": "Clock",
+      "required": [
+        "id",
+        "user",
+        "status",
+        "time"
+      ],
+      "properties": {
+        "user": {
+          "type": "User",
+          "description": "User creating this clock"
+        },
+        "time": {
+          "type": "naive_datetime",
+          "description": "Time of day"
+        },
+        "status": {
+          "type": "boolean",
+          "description": "Clock in or out"
+        },
+        "id": {
+          "type": "string",
+          "description": "Unique identifier"
+        }
+      },
+      "example": {
+        "user": {
+          "username": "John",
+          "id": "123",
+          "email": "john@mail.com"
+        },
+        "time": "2024-10-08 12:52:03",
+        "status": "true",
+        "id": "12345"
+      },
+      "description": "Timestamp of clock in or out for a user"
+    },
+    "Clocks": {
+      "type": "array",
+      "title": "Clocks",
+      "items": {
+        "$ref": "#/definitions/Clock"
+      },
+      "description": "A collection of Clocks"
+    },
     "User": {
       "type": "object",
       "title": "User",
       "required": [
+        "id",
         "email",
         "username"
       ],
@@ -141,6 +254,10 @@
           "type": "string",
           "description": "Users name"
         },
+        "id": {
+          "type": "string",
+          "description": "Unique identifier"
+        },
         "email": {
           "type": "string",
           "description": "Users email"
@@ -148,6 +265,7 @@
       },
       "example": {
         "username": "Joe",
+        "id": "123",
         "email": "joe@mail.com"
       },
       "description": "A user of the application"
