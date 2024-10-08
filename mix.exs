@@ -10,7 +10,15 @@ defmodule TimeManager.MixProject do
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
-      compilers: Mix.compilers() ++ [:phoenix_swagger]
+      compilers: Mix.compilers() ++ [:phoenix_swagger],
+      # ExDoc configuration
+      name: "TimeManager",
+      source_url: "https://github.com/EpitechMscProPromo2026/T-POO-700-LIL_2",
+      homepage_url: "https://github.com/EpitechMscProPromo2026/T-POO-700-LIL_2",
+      docs: [
+        main: "TimeManager",
+        extras: ["README.md"]
+      ]
     ]
   end
 
@@ -45,7 +53,8 @@ defmodule TimeManager.MixProject do
       {:bandit, "~> 1.5"},
       {:phoenix_swagger, "~> 0.8"},
       {:ex_json_schema, "~> 0.5"},
-      {:poison, "~> 3.1"}
+      {:poison, "~> 3.1"},
+      {:ex_doc, "~> 0.30", only: :dev, runtime: false}
     ]
   end
 
