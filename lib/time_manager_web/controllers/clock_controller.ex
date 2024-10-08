@@ -50,10 +50,8 @@ defmodule TimeManagerWeb.ClockController do
           end
 
           example(%{
-            clock: %{
-              time: "2024-10-08 12:00:00",
-              status: true
-            }
+            time: "2024-10-08 12:00:00",
+            status: true
           })
         end
     }
@@ -75,7 +73,7 @@ defmodule TimeManagerWeb.ClockController do
     response(200, "Success", Schema.ref(:Clocks))
   end
 
-  def create(conn, %{"user_id" => user_id, "clock" => clock_params}) do
+  def create(conn, %{"user_id" => user_id} = clock_params) do
     clock_params = Map.put(clock_params, "user_id", user_id)
 
     with {:ok, %Clock{} = clock} <- Clocks.create_clock(clock_params) do
@@ -92,7 +90,7 @@ defmodule TimeManagerWeb.ClockController do
 
     parameters do
       user_id(:path, :string, "Unique identifier for the user", required: true)
-      clock(:body, Schema.ref(:ClockAttributes), "Clock attributes", required: true)
+      attributes(:body, Schema.ref(:ClockAttributes), "Clock attributes", required: true)
     end
 
     response(201, "Successfuly created", Schema.ref(:Clock))

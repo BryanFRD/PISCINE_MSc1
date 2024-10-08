@@ -44,10 +44,8 @@ defmodule TimeManagerWeb.UserController do
           end
 
           example(%{
-            user: %{
-              username: "john_doe",
-              email: "john.doe@email.com"
-            }
+            username: "john_doe",
+            email: "john.doe@email.com"
           })
         end
     }
@@ -70,7 +68,7 @@ defmodule TimeManagerWeb.UserController do
     response(200, "List of users", Schema.ref(:Users))
   end
 
-  def create(conn, %{"user" => user_params}) do
+  def create(conn, user_params) do
     with {:ok, %User{} = user} <- Users.create_user(user_params) do
       conn
       |> put_status(:created)
@@ -84,7 +82,7 @@ defmodule TimeManagerWeb.UserController do
     description("Create a new user")
 
     parameters do
-      user(:body, Schema.ref(:UserAttributes), "User attributes", required: true)
+      attributes(:body, Schema.ref(:UserAttributes), "User attributes", required: true)
     end
 
     response(201, "Successfuly created user", Schema.ref(:User))
@@ -109,7 +107,7 @@ defmodule TimeManagerWeb.UserController do
     response(404, "User not found")
   end
 
-  def update(conn, %{"id" => id, "user" => user_params}) do
+  def update(conn, %{"id" => id} = user_params) do
     user = Users.get_user!(id)
 
     with {:ok, %User{} = user} <- Users.update_user(user, user_params) do
@@ -123,7 +121,7 @@ defmodule TimeManagerWeb.UserController do
 
     parameters do
       id(:path, :string, "Unique identifier for the user", required: true)
-      user(:body, Schema.ref(:UserAttributes), "User attributes", required: true)
+      attributes(:body, Schema.ref(:UserAttributes), "User attributes", required: true)
     end
 
     response(200, "Updated user", Schema.ref(:User))

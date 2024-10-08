@@ -24,14 +24,14 @@ defmodule TimeManagerWeb.WorkingtimeControllerTest do
   describe "index" do
     test "lists all user workingtimes", %{conn: conn, user: user} do
       conn = get(conn, ~p"/api/workingtimes/#{user.id}")
-      assert json_response(conn, 200)["data"] == []
+      assert json_response(conn, 200) == []
     end
   end
 
   describe "create workingtime" do
     test "renders workingtime when data is valid", %{conn: conn, user: user} do
-      conn = post(conn, ~p"/api/workingtimes/#{user.id}", workingtime: @create_attrs)
-      assert %{"id" => id} = json_response(conn, 201)["data"]
+      conn = post(conn, ~p"/api/workingtimes/#{user.id}", @create_attrs)
+      assert %{"id" => id} = json_response(conn, 201)
 
       conn = get(conn, ~p"/api/workingtimes/#{user.id}/#{id}")
 
@@ -39,11 +39,11 @@ defmodule TimeManagerWeb.WorkingtimeControllerTest do
                "id" => ^id,
                "end" => "2024-10-07T09:40:00",
                "start" => "2024-10-07T09:40:00"
-             } = json_response(conn, 200)["data"]
+             } = json_response(conn, 200)
     end
 
     test "renders errors when data is invalid", %{conn: conn, user: user} do
-      conn = post(conn, ~p"/api/workingtimes/#{user.id}", workingtime: @invalid_attrs)
+      conn = post(conn, ~p"/api/workingtimes/#{user.id}", @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
@@ -56,8 +56,8 @@ defmodule TimeManagerWeb.WorkingtimeControllerTest do
       user: user,
       workingtime: %Workingtime{id: id} = workingtime
     } do
-      conn = put(conn, ~p"/api/workingtimes/#{workingtime}", workingtime: @update_attrs)
-      assert %{"id" => ^id} = json_response(conn, 200)["data"]
+      conn = put(conn, ~p"/api/workingtimes/#{workingtime}", @update_attrs)
+      assert %{"id" => ^id} = json_response(conn, 200)
 
       conn = get(conn, ~p"/api/workingtimes/#{user.id}/#{id}")
 
@@ -65,11 +65,11 @@ defmodule TimeManagerWeb.WorkingtimeControllerTest do
                "id" => ^id,
                "end" => "2024-10-08T09:40:00",
                "start" => "2024-10-08T09:40:00"
-             } = json_response(conn, 200)["data"]
+             } = json_response(conn, 200)
     end
 
     test "renders errors when data is invalid", %{conn: conn, workingtime: workingtime} do
-      conn = put(conn, ~p"/api/workingtimes/#{workingtime}", workingtime: @invalid_attrs)
+      conn = put(conn, ~p"/api/workingtimes/#{workingtime}", @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
     end
   end

@@ -50,10 +50,8 @@ defmodule TimeManagerWeb.WorkingtimeController do
           end
 
           example(%{
-            workingtime: %{
-              start: "2024-10-08 08:00:00",
-              end: "2024-10-08 17:00:00"
-            }
+            start: "2024-10-08 08:00:00",
+            end: "2024-10-08 17:00:00"
           })
         end
     }
@@ -80,9 +78,7 @@ defmodule TimeManagerWeb.WorkingtimeController do
     response(200, "List of user workingtimes", Schema.ref(:Workingtimes))
   end
 
-  def create(conn, %{"user_id" => user_id, "workingtime" => workingtime_params}) do
-    workingtime_params = Map.put(workingtime_params, "user_id", user_id)
-
+  def create(conn, workingtime_params) do
     with {:ok, %Workingtime{} = workingtime} <-
            Workingtimes.create_workingtime(workingtime_params) do
       conn
@@ -99,7 +95,7 @@ defmodule TimeManagerWeb.WorkingtimeController do
     parameters do
       user_id(:path, :string, "Unique identifier for the user", required: true)
 
-      workingtime(:body, Schema.ref(:WorkingtimeAttributes), "Workingtime attributes",
+      attributes(:body, Schema.ref(:WorkingtimeAttributes), "Workingtime attributes",
         required: true
       )
     end
@@ -127,7 +123,7 @@ defmodule TimeManagerWeb.WorkingtimeController do
     response(404, "Workingtime not found")
   end
 
-  def update(conn, %{"id" => id, "workingtime" => workingtime_params}) do
+  def update(conn, %{"id" => id} = workingtime_params) do
     workingtime = Workingtimes.get_workingtime!(id)
 
     with {:ok, %Workingtime{} = workingtime} <-
@@ -143,7 +139,7 @@ defmodule TimeManagerWeb.WorkingtimeController do
     parameters do
       id(:path, :string, "Unique identifier for the workingtime", required: true)
 
-      workingtime(:body, Schema.ref(:WorkingtimeAttributes), "Workingtime attributes",
+      attributes(:body, Schema.ref(:WorkingtimeAttributes), "Workingtime attributes",
         required: true
       )
     end

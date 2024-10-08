@@ -1,6 +1,6 @@
 {
-  "basePath": "/api",
   "swagger": "2.0",
+  "basePath": "/api",
   "paths": {
     "/workingtimes/{user_id}/{id}": {
       "get": {
@@ -72,7 +72,7 @@
               "$ref": "#/definitions/WorkingtimeAttributes"
             },
             "required": true,
-            "name": "workingtime",
+            "name": "attributes",
             "in": "body",
             "description": "Workingtime attributes"
           }
@@ -156,7 +156,7 @@
               "$ref": "#/definitions/WorkingtimeAttributes"
             },
             "required": true,
-            "name": "workingtime",
+            "name": "attributes",
             "in": "body",
             "description": "Workingtime attributes"
           }
@@ -226,7 +226,7 @@
               "$ref": "#/definitions/UserAttributes"
             },
             "required": true,
-            "name": "user",
+            "name": "attributes",
             "in": "body",
             "description": "User attributes"
           }
@@ -314,7 +314,7 @@
               "$ref": "#/definitions/UserAttributes"
             },
             "required": true,
-            "name": "user",
+            "name": "attributes",
             "in": "body",
             "description": "User attributes"
           }
@@ -391,7 +391,7 @@
               "$ref": "#/definitions/ClockAttributes"
             },
             "required": true,
-            "name": "clock",
+            "name": "attributes",
             "in": "body",
             "description": "Clock attributes"
           }
@@ -427,14 +427,6 @@
     }
   },
   "definitions": {
-    "Workingtimes": {
-      "type": "array",
-      "title": "Workingtimes",
-      "items": {
-        "$ref": "#/definitions/Workingtime"
-      },
-      "description": "A collection of Workingtimes"
-    },
     "WorkingtimeAttributes": {
       "type": "object",
       "title": "WorkingtimeAttributes",
@@ -453,12 +445,33 @@
         }
       },
       "example": {
-        "workingtime": {
-          "start": "2024-10-08 08:00:00",
-          "end": "2024-10-08 17:00:00"
-        }
+        "start": "2024-10-08 08:00:00",
+        "end": "2024-10-08 17:00:00"
       },
       "description": "Attributes for creating or updating a workingtime"
+    },
+    "ClockAttributes": {
+      "type": "object",
+      "title": "ClockAttributes",
+      "required": [
+        "status",
+        "time"
+      ],
+      "properties": {
+        "time": {
+          "type": "datetime",
+          "description": "Timestamp for clock"
+        },
+        "status": {
+          "type": "boolean",
+          "description": "Clock in or out"
+        }
+      },
+      "example": {
+        "time": "2024-10-08 12:00:00",
+        "status": true
+      },
+      "description": "Attributes for creating a clock"
     },
     "Workingtime": {
       "type": "object",
@@ -499,38 +512,13 @@
       },
       "description": "A user's working time"
     },
-    "Clocks": {
+    "Workingtimes": {
       "type": "array",
-      "title": "Clocks",
+      "title": "Workingtimes",
       "items": {
-        "$ref": "#/definitions/Clock"
+        "$ref": "#/definitions/Workingtime"
       },
-      "description": "A collection of Clocks"
-    },
-    "ClockAttributes": {
-      "type": "object",
-      "title": "ClockAttributes",
-      "required": [
-        "status",
-        "time"
-      ],
-      "properties": {
-        "time": {
-          "type": "datetime",
-          "description": "Timestamp for clock"
-        },
-        "status": {
-          "type": "boolean",
-          "description": "Clock in or out"
-        }
-      },
-      "example": {
-        "clock": {
-          "time": "2024-10-08 12:00:00",
-          "status": true
-        }
-      },
-      "description": "Attributes for creating a clock"
+      "description": "A collection of Workingtimes"
     },
     "Clock": {
       "type": "object",
@@ -571,13 +559,13 @@
       },
       "description": "Timestamp of clock in or out for a user"
     },
-    "Users": {
+    "Clocks": {
       "type": "array",
-      "title": "Users",
+      "title": "Clocks",
       "items": {
-        "$ref": "#/definitions/User"
+        "$ref": "#/definitions/Clock"
       },
-      "description": "A collection of Users"
+      "description": "A collection of Clocks"
     },
     "UserAttributes": {
       "type": "object",
@@ -597,10 +585,8 @@
         }
       },
       "example": {
-        "user": {
-          "username": "john_doe",
-          "email": "john.doe@email.com"
-        }
+        "username": "john_doe",
+        "email": "john.doe@email.com"
       },
       "description": "Attributes for creating or updating a user"
     },
@@ -632,6 +618,14 @@
         "email": "joe@mail.com"
       },
       "description": "A user of the application"
+    },
+    "Users": {
+      "type": "array",
+      "title": "Users",
+      "items": {
+        "$ref": "#/definitions/User"
+      },
+      "description": "A collection of Users"
     }
   },
   "host": "localhost:4000",
