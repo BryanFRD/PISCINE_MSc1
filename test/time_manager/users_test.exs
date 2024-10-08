@@ -21,11 +21,11 @@ defmodule TimeManager.UsersTest do
     end
 
     test "create_user/1 with valid data creates a user" do
-      valid_attrs = %{username: "some username", email: "some email"}
+      valid_attrs = %{username: "john_doe", email: "john.doe@email.com"}
 
       assert {:ok, %User{} = user} = Users.create_user(valid_attrs)
-      assert user.username == "some username"
-      assert user.email == "some email"
+      assert user.username == "john_doe"
+      assert user.email == "john.doe@email.com"
     end
 
     test "create_user/1 with invalid data returns error changeset" do
@@ -34,11 +34,11 @@ defmodule TimeManager.UsersTest do
 
     test "update_user/2 with valid data updates the user" do
       user = user_fixture()
-      update_attrs = %{username: "some updated username", email: "some updated email"}
+      update_attrs = %{username: "john_doe1", email: "john.doe1@email.com"}
 
       assert {:ok, %User{} = user} = Users.update_user(user, update_attrs)
-      assert user.username == "some updated username"
-      assert user.email == "some updated email"
+      assert user.username == "john_doe1"
+      assert user.email == "john.doe1@email.com"
     end
 
     test "update_user/2 with invalid data returns error changeset" do

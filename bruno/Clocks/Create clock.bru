@@ -1,0 +1,20 @@
+meta {
+  name: Create clock
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{api_url}}/clocks/1
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "clock": {
+      "time": "2024-10-08 10:00:00",
+      "status": true
+    }
+  }
+}
