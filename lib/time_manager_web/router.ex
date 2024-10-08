@@ -21,13 +21,14 @@ defmodule TimeManagerWeb.Router do
       basePath: "/api",
       info: %{
         version: "1.0",
-        title: "Time Manager",
+        title: "Time Manager"
       }
     }
   end
 
   scope "/api/swagger" do
-    forward "/", PhoenixSwagger.Plug.SwaggerUI, otp_app: :time_manager, swagger_file: "swagger.json"
+    forward "/", PhoenixSwagger.Plug.SwaggerUI,
+      otp_app: :time_manager,
+      swagger_file: "swagger.json"
   end
-
 end

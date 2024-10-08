@@ -32,7 +32,7 @@ Clone the project :
 Go to the project directory :
 
 ```bash
-  cd timeManager
+  cd T-POO-700-LIL_2
 ```
 Run docker Compose to get the workspace :
 
@@ -68,7 +68,7 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 #### SWAGGER
 
-To check the API Reference you can visit [`LE SWAGGER`](http://localhost:4000/api/swager/etc) from your browser.
+To check the API Reference you can visit [`the swagger`](http://localhost:4000/api/swagger) from your browser.
 
 
 ## Running Tests

@@ -15,15 +15,15 @@ defmodule TimeManagerWeb.UserController do
           description("A user of the application")
 
           properties do
-            username(:string, "Users name", required: true)
-            email(:string, "Users email", required: true)
-            id(:string, "Unique identifier", required: true)
+            id(:number, "Unique identifier for the user", required: true)
+            email(:string, "The user's email address", required: true)
+            username(:string, "The user's username", required: true)
           end
 
           example(%{
+            id: 1,
             username: "Joe",
-            email: "joe@mail.com",
-            id: "123"
+            email: "joe@mail.com"
           })
         end,
       Users:
@@ -32,6 +32,23 @@ defmodule TimeManagerWeb.UserController do
           description("A collection of Users")
           type(:array)
           items(Schema.ref(:User))
+        end,
+      UserAttributes:
+        swagger_schema do
+          title("UserAttributes")
+          description("Attributes for creating or updating a user")
+
+          properties do
+            email(:string, "The user's email address", required: true)
+            username(:string, "The user's username", required: true)
+          end
+
+          example(%{
+            user: %{
+              username: "john_doe",
+              email: "john.doe@email.com"
+            }
+          })
         end
     }
   end
@@ -46,11 +63,11 @@ defmodule TimeManagerWeb.UserController do
     description("List all users")
 
     parameters do
-      username(:body, :string, "Username", required: false)
-      email(:body, :string, "User's email", required: false)
+      username(:body, :string, "The user's username", required: false)
+      email(:body, :string, "The user's email address", required: false)
     end
 
-    response(200, "Success", Schema.ref(:Users))
+    response(200, "List of users", Schema.ref(:Users))
   end
 
   def create(conn, %{"user" => user_params}) do
@@ -67,11 +84,12 @@ defmodule TimeManagerWeb.UserController do
     description("Create a new user")
 
     parameters do
-      username(:body, :string, "User's name", required: true)
-      email(:body, :string, "User's email", required: true)
+      user(:body, Schema.ref(:UserAttributes), "User attributes", required: true)
     end
 
-    response(201, "Successfuly created", Schema.ref(:User))
+    response(201, "Successfuly created user", Schema.ref(:User))
+    response(400, "Bad request")
+    response(422, "Unprocessable entity")
   end
 
   def show(conn, %{"id" => id}) do
@@ -82,7 +100,13 @@ defmodule TimeManagerWeb.UserController do
   swagger_path :show do
     get("/users/{id}")
     description("Show a single user")
-    response(200, "Success", Schema.ref(:User))
+
+    parameters do
+      id(:path, :string, "Unique identifier for the user", required: true)
+    end
+
+    response(200, "User", Schema.ref(:User))
+    response(404, "User not found")
   end
 
   def update(conn, %{"id" => id, "user" => user_params}) do
@@ -98,10 +122,14 @@ defmodule TimeManagerWeb.UserController do
     description("Update user")
 
     parameters do
-      id(:path, :string, "User's ID", required: true)
+      id(:path, :string, "Unique identifier for the user", required: true)
+      user(:body, Schema.ref(:UserAttributes), "User attributes", required: true)
     end
 
-    response(200, "Success", Schema.ref(:User))
+    response(200, "Updated user", Schema.ref(:User))
+    response(400, "Bad request")
+    response(404, "User not found")
+    response(422, "Unprocessable entity")
   end
 
   def delete(conn, %{"id" => id}) do
@@ -115,6 +143,12 @@ defmodule TimeManagerWeb.UserController do
   swagger_path :delete do
     PhoenixSwagger.Path.delete("/users/{id}")
     description("Delete user")
-    response(200, "Success")
+
+    parameters do
+      id(:path, :string, "Unique identifier for the user", required: true)
+    end
+
+    response(200, "Successfully deleted")
+    response(404, "User not found")
   end
 end

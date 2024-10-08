@@ -9,11 +9,20 @@
         ],
         "summary": "",
         "responses": {
+          "422": {
+            "description": "Unprocessable entity"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "400": {
+            "description": "Bad request"
+          },
           "200": {
             "schema": {
               "$ref": "#/definitions/User"
             },
-            "description": "Success"
+            "description": "Updated user"
           }
         },
         "parameters": [
@@ -22,7 +31,16 @@
             "required": true,
             "name": "id",
             "in": "path",
-            "description": "User's ID"
+            "description": "Unique identifier for the user"
+          },
+          {
+            "schema": {
+              "$ref": "#/definitions/UserAttributes"
+            },
+            "required": true,
+            "name": "user",
+            "in": "body",
+            "description": "User attributes"
           }
         ],
         "operationId": "TimeManagerWeb.UserController.update",
@@ -34,14 +52,25 @@
         ],
         "summary": "",
         "responses": {
+          "404": {
+            "description": "User not found"
+          },
           "200": {
             "schema": {
               "$ref": "#/definitions/User"
             },
-            "description": "Success"
+            "description": "User"
           }
         },
-        "parameters": [],
+        "parameters": [
+          {
+            "type": "string",
+            "required": true,
+            "name": "id",
+            "in": "path",
+            "description": "Unique identifier for the user"
+          }
+        ],
         "operationId": "TimeManagerWeb.UserController.show",
         "description": "Show a single user"
       },
@@ -51,11 +80,22 @@
         ],
         "summary": "",
         "responses": {
+          "404": {
+            "description": "User not found"
+          },
           "200": {
-            "description": "Success"
+            "description": "Successfully deleted"
           }
         },
-        "parameters": [],
+        "parameters": [
+          {
+            "type": "string",
+            "required": true,
+            "name": "id",
+            "in": "path",
+            "description": "Unique identifier for the user"
+          }
+        ],
         "operationId": "TimeManagerWeb.UserController.delete",
         "description": "Delete user"
       }
@@ -67,27 +107,28 @@
         ],
         "summary": "",
         "responses": {
+          "422": {
+            "description": "Unprocessable entity"
+          },
+          "400": {
+            "description": "Bad request"
+          },
           "201": {
             "schema": {
               "$ref": "#/definitions/User"
             },
-            "description": "Successfuly created"
+            "description": "Successfuly created user"
           }
         },
         "parameters": [
           {
-            "schema": "string",
+            "schema": {
+              "$ref": "#/definitions/UserAttributes"
+            },
             "required": true,
-            "name": "username",
+            "name": "user",
             "in": "body",
-            "description": "User's name"
-          },
-          {
-            "schema": "string",
-            "required": true,
-            "name": "email",
-            "in": "body",
-            "description": "User's email"
+            "description": "User attributes"
           }
         ],
         "operationId": "TimeManagerWeb.UserController.create",
@@ -103,7 +144,7 @@
             "schema": {
               "$ref": "#/definitions/Users"
             },
-            "description": "Success"
+            "description": "List of users"
           }
         },
         "parameters": [
@@ -112,14 +153,14 @@
             "required": false,
             "name": "username",
             "in": "body",
-            "description": "Username"
+            "description": "The user's username"
           },
           {
             "schema": "string",
             "required": false,
             "name": "email",
             "in": "body",
-            "description": "User's email"
+            "description": "The user's email address"
           }
         ],
         "operationId": "TimeManagerWeb.UserController.index",
@@ -133,6 +174,15 @@
         ],
         "summary": "",
         "responses": {
+          "422": {
+            "description": "Unprocessable entity"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "400": {
+            "description": "Bad request"
+          },
           "201": {
             "schema": {
               "$ref": "#/definitions/Clock"
@@ -146,21 +196,16 @@
             "required": true,
             "name": "user_id",
             "in": "path",
-            "description": "User's ID"
+            "description": "Unique identifier for the user"
           },
           {
-            "schema": "naive_datetime",
+            "schema": {
+              "$ref": "#/definitions/ClockAttributes"
+            },
             "required": true,
-            "name": "time",
+            "name": "clock",
             "in": "body",
-            "description": "Timestamp for clock"
-          },
-          {
-            "schema": "boolean",
-            "required": true,
-            "name": "status",
-            "in": "body",
-            "description": "Clock in or out"
+            "description": "Clock attributes"
           }
         ],
         "operationId": "TimeManagerWeb.ClockController.create",
@@ -185,7 +230,7 @@
             "required": true,
             "name": "user_id",
             "in": "path",
-            "description": "User's ID"
+            "description": "Unique identifier for the user"
           }
         ],
         "operationId": "TimeManagerWeb.ClockController.index",
@@ -194,42 +239,92 @@
     }
   },
   "definitions": {
-    "Clock": {
+    "ClockAttributes": {
       "type": "object",
-      "title": "Clock",
+      "title": "ClockAttributes",
       "required": [
-        "id",
-        "user",
         "status",
         "time"
       ],
       "properties": {
-        "user": {
-          "type": "User",
-          "description": "User creating this clock"
-        },
         "time": {
-          "type": "naive_datetime",
-          "description": "Time of day"
+          "type": "datetime",
+          "description": "Timestamp for clock"
         },
         "status": {
           "type": "boolean",
           "description": "Clock in or out"
-        },
-        "id": {
+        }
+      },
+      "example": {
+        "clock": {
+          "time": "2024-10-08 12:00:00",
+          "status": true
+        }
+      },
+      "description": "Attributes for creating a clock"
+    },
+    "UserAttributes": {
+      "type": "object",
+      "title": "UserAttributes",
+      "required": [
+        "username",
+        "email"
+      ],
+      "properties": {
+        "username": {
           "type": "string",
-          "description": "Unique identifier"
+          "description": "The user's username"
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's email address"
         }
       },
       "example": {
         "user": {
-          "username": "John",
-          "id": "123",
-          "email": "john@mail.com"
+          "username": "john_doe",
+          "email": "john.doe@email.com"
+        }
+      },
+      "description": "Attributes for creating or updating a user"
+    },
+    "Clock": {
+      "type": "object",
+      "title": "Clock",
+      "required": [
+        "user",
+        "status",
+        "time",
+        "id"
+      ],
+      "properties": {
+        "user": {
+          "type": "User",
+          "description": "The user creating this clock"
         },
-        "time": "2024-10-08 12:52:03",
-        "status": "true",
-        "id": "12345"
+        "time": {
+          "type": "datetime",
+          "description": "Time of day"
+        },
+        "status": {
+          "type": "boolean",
+          "description": "Indicates whether the clock is in or out"
+        },
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the clock"
+        }
+      },
+      "example": {
+        "user": {
+          "username": "john_doe",
+          "id": 1,
+          "email": "john.doe@email.com"
+        },
+        "time": "2024-10-08 12:00:00",
+        "status": true,
+        "id": 1
       },
       "description": "Timestamp of clock in or out for a user"
     },
@@ -245,27 +340,27 @@
       "type": "object",
       "title": "User",
       "required": [
-        "id",
+        "username",
         "email",
-        "username"
+        "id"
       ],
       "properties": {
         "username": {
           "type": "string",
-          "description": "Users name"
+          "description": "The user's username"
         },
         "id": {
-          "type": "string",
-          "description": "Unique identifier"
+          "type": "number",
+          "description": "Unique identifier for the user"
         },
         "email": {
           "type": "string",
-          "description": "Users email"
+          "description": "The user's email address"
         }
       },
       "example": {
         "username": "Joe",
-        "id": "123",
+        "id": 1,
         "email": "joe@mail.com"
       },
       "description": "A user of the application"
