@@ -15,4 +15,18 @@ defmodule TimeManagerWeb.Router do
     get "/clocks/:user_id", ClockController, :index
     post "/clocks/:user_id", ClockController, :create
   end
+
+  def swagger_info do
+    %{
+      info: %{
+        version: "1.0",
+        title: "Time Manager"
+      }
+    }
+  end
+
+  scope "/api/swagger" do
+    forward "/", PhoenixSwagger.Plug.SwaggerUI, otp_app: :time_manager, swagger_file: "swagger.json"
+  end
+
 end

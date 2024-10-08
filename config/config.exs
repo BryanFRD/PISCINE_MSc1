@@ -22,6 +22,14 @@ config :time_manager, TimeManagerWeb.Endpoint,
   pubsub_server: TimeManager.PubSub,
   live_view: [signing_salt: "uNruWVsX"]
 
+  config :time_manager, :phoenix_swagger,
+  swagger_files: %{
+    "priv/static/swagger.json" => [
+      router: TimeManagerWeb.Router,     # phoenix routes will be converted to swagger paths
+      endpoint: TimeManagerWeb.Endpoint  # (optional) endpoint config used to set host, port and https schemes.
+    ]
+  }
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
