@@ -56,28 +56,26 @@ onMounted(() => {
         {{ workingTimesError }}
       </div>
 
-      <div>
-        <Table>
-          <TableEmpty v-if="workingTimes.length === 0" :colspan="2">
-            No working time
-          </TableEmpty>
+      <Table v-else>
+        <TableEmpty v-if="workingTimes.length === 0" :colspan="2">
+          No working time
+        </TableEmpty>
 
-          <TableCaption>The list of working times.</TableCaption>
+        <TableCaption>The list of working times.</TableCaption>
 
-          <TableHeader>
-            <TableRow>
-              <TableHead>Start</TableHead>
-              <TableHead>End</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow v-for="(workingTime, index) in workingTimes" :key="index">
-              <TableCell>{{ formattedDate(workingTime.start) }}</TableCell>
-              <TableCell>{{ formattedDate(workingTime.end) }}</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </div>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Start</TableHead>
+            <TableHead>End</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow v-for="(workingTime, index) in workingTimes" :key="index">
+            <TableCell>{{ formattedDate(workingTime.start) }}</TableCell>
+            <TableCell>{{ formattedDate(workingTime.end) }}</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
     </div>
   </div>
 </template>
