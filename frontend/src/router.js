@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+
 import UserView from './components/user/UserView.vue'
 
 const routes = [{ path: '/:userId', name: 'user', component: UserView }]

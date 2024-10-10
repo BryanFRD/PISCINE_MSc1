@@ -1,14 +1,16 @@
 <script setup>
-import { computed } from 'vue'
 import { Separator } from 'radix-vue'
+import { computed } from 'vue'
+
 import { cn } from '@/lib/utils'
 
 const props = defineProps({
-  orientation: { type: String, default: 'horizontal' },
-  decorative: { type: Boolean },
-  asChild: { type: Boolean },
-  class: { type: null, default: null },
-  label: { type: String, default: null }
+  orientation: { type: String, required: false },
+  decorative: { type: Boolean, required: false },
+  asChild: { type: Boolean, required: false },
+  as: { type: null, required: false },
+  class: { type: null, required: false },
+  label: { type: String, required: false }
 })
 
 const delegatedProps = computed(() => {

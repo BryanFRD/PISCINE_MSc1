@@ -2,8 +2,8 @@
 import { AlertDialogRoot, useForwardPropsEmits } from 'radix-vue'
 
 const props = defineProps({
-  open: { type: Boolean },
-  defaultOpen: { type: Boolean }
+  open: { type: Boolean, required: false },
+  defaultOpen: { type: Boolean, required: false }
 })
 const emits = defineEmits(['update:open'])
 

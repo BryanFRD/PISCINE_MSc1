@@ -1,5 +1,15 @@
 <script setup>
+import { toTypedSchema } from '@vee-validate/zod'
+import { Loader2 } from 'lucide-vue-next'
+import { useForm } from 'vee-validate'
 import { ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import { toast } from 'vue-sonner'
+import { z } from 'zod'
+
+import { instance } from '@/api/instance'
+import { AutoForm } from '@/components/ui/auto-form'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -9,58 +19,47 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
-import { instance } from '@/api/instance'
-import { useRoute, useRouter } from 'vue-router'
-import { Loader2 } from 'lucide-vue-next'
 
 const route = useRoute()
-const router = useRouter()
 
 const isOpen = ref(false)
+const isLoading = ref(false)
 
 const props = defineProps({
   user: { type: Object, required: true },
   onSuccess: { type: Function, default: () => {} }
 })
 
-const attributes = ref({
-  username: '',
-  email: ''
+const schema = z.object({
+  username: z.string().min(3).max(255),
+  email: z.string().email()
 })
 
-const submitLoading = ref(false)
-const submitError = ref(null)
+const form = useForm({
+  validationSchema: toTypedSchema(schema)
+})
 
-const submit = async () => {
-  submitLoading.value = true
-  submitError.value = null
+const onSubmit = async values => {
+  isLoading.value = true
 
   try {
-    await instance.put(`/users/${route.params.userId}`, attributes.value)
+    await instance.put(`/users/${route.params.userId}`, values)
 
     props.onSuccess()
     isOpen.value = false
+
+    toast.success('User updated successfully')
   } catch (result) {
-    submitError.value = result.response.data.errors
+    form.setErrors(result.response.data.errors)
   } finally {
-    submitLoading.value = false
+    isLoading.value = false
   }
 }
 
-watch(isOpen, value => {
-  if (value) {
-    attributes.value = {
-      username: props.user.username,
-      email: props.user.email
-    }
-
-    submitLoading.value = false
-    submitError.value = null
-  }
-})
+watch(
+  () => [props.user, isOpen.value],
+  () => form.setValues(props.user)
+)
 </script>
 
 <template>
@@ -77,43 +76,19 @@ watch(isOpen, value => {
         </DialogDescription>
       </DialogHeader>
 
-      <div class="grid gap-y-6 py-4">
-        <div class="grid gap-y-2">
-          <Label for="username">Username</Label>
-          <Input
-            id="username"
-            v-model="attributes.username"
-            type="text"
-            class="col-span-3"
-          />
-
-          <p
-            v-if="submitError?.username"
-            class="text-sm font-medium text-destructive"
-          >
-            Username {{ submitError.username[0] }}
-          </p>
-        </div>
-
-        <div class="grid gap-y-2">
-          <Label for="email">Email</Label>
-          <Input id="email" v-model="attributes.email" type="email" />
-
-          <p
-            v-if="submitError?.email"
-            class="text-sm font-medium text-destructive"
-          >
-            Email {{ submitError.email[0] }}
-          </p>
-        </div>
-      </div>
-
-      <DialogFooter>
-        <Button :disabled="submitLoading" @click="submit">
-          <Loader2 v-if="submitLoading" class="size-4 animate-spin" />
-          <span>Update</span>
-        </Button>
-      </DialogFooter>
+      <AutoForm
+        class="space-y-6 py-4"
+        :schema="schema"
+        :form="form"
+        @submit="onSubmit"
+      >
+        <DialogFooter>
+          <Button type="submit" :disabled="isLoading">
+            <Loader2 v-if="isLoading" class="size-4 animate-spin" />
+            <span>Update</span>
+          </Button>
+        </DialogFooter>
+      </AutoForm>
     </DialogContent>
   </Dialog>
 </template>

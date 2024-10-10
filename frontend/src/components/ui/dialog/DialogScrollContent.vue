@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { X } from 'lucide-vue-next'
 import {
   DialogClose,
   DialogContent,
@@ -7,7 +7,8 @@ import {
   DialogPortal,
   useForwardPropsEmits
 } from 'radix-vue'
-import { X } from 'lucide-vue-next'
+import { computed } from 'vue'
+
 import { cn } from '@/lib/utils'
 
 const props = defineProps({
@@ -15,8 +16,8 @@ const props = defineProps({
   trapFocus: { type: Boolean, required: false },
   disableOutsidePointerEvents: { type: Boolean, required: false },
   asChild: { type: Boolean, required: false },
-  as: { type: null, default: undefined },
-  class: { type: String, default: null }
+  as: { type: null, required: false },
+  class: { type: null, required: false }
 })
 const emits = defineEmits([
   'escapeKeyDown',

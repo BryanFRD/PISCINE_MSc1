@@ -1,13 +1,21 @@
 <script setup>
+import { Edit3, Loader2, Plus, Trash2, Undo, User2 } from 'lucide-vue-next'
 import { onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { instance } from '../../api/instance'
-import { Loader2, User2, Plus, Edit3, Trash2, Undo } from 'lucide-vue-next'
+
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
+
+import { instance } from '../../api/instance'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger
+} from '../ui/accordion'
 import CreateUserDialog from './CreateUserDialog.vue'
-import EditUserDialog from './EditUserDialog.vue'
 import DeleteUserDialog from './DeleteUserDialog.vue'
+import EditUserDialog from './EditUserDialog.vue'
 
 const route = useRoute()
 
@@ -52,50 +60,56 @@ onMounted(() => {
         {{ userError }}
       </div>
 
-      <div v-else class="flex items-center gap-x-4">
-        <div
-          class="flex size-10 items-center justify-center rounded-full bg-zinc-200"
-        >
-          <User2 class="size-6" />
-        </div>
+      <Accordion v-else type="single" collapsible>
+        <AccordionItem value="user" class="border-none">
+          <AccordionTrigger class="py-0">
+            <div class="flex items-center gap-x-4">
+              <div
+                class="flex size-10 items-center justify-center rounded-full bg-zinc-200"
+              >
+                <User2 class="size-6" />
+              </div>
 
-        <div>
-          <h1 class="text-lg font-semibold leading-6">
-            {{ user.username }}
-          </h1>
-          <p class="text-sm leading-6 text-zinc-500">
-            {{ user.email }}
-          </p>
-        </div>
-      </div>
+              <div>
+                <h1 class="text-left text-lg font-semibold leading-6">
+                  {{ user.username }}
+                </h1>
+                <p class="text-left text-sm leading-6 text-zinc-500">
+                  {{ user.email }}
+                </p>
+              </div>
+            </div>
+          </AccordionTrigger>
 
-      <Separator class="my-4" />
+          <AccordionContent class="pb-0 pt-4">
+            <div class="flex items-center gap-x-2">
+              <CreateUserDialog>
+                <Button size="xs">
+                  <Plus class="size-4" />
+                  <span>Create a user</span>
+                </Button>
+              </CreateUserDialog>
 
-      <div class="flex items-center gap-x-2">
-        <CreateUserDialog>
-          <Button size="xs">
-            <Plus class="size-4" />
-            <span>Create a user</span>
-          </Button>
-        </CreateUserDialog>
+              <EditUserDialog
+                :user="user"
+                :on-success="() => getUser(route.params.userId)"
+              >
+                <Button size="xs">
+                  <Edit3 class="size-4" />
+                  <span>Edit the user</span>
+                </Button>
+              </EditUserDialog>
 
-        <EditUserDialog
-          :user="user"
-          :on-success="() => getUser(route.params.userId)"
-        >
-          <Button size="xs">
-            <Edit3 class="size-4" />
-            <span>Edit the user</span>
-          </Button>
-        </EditUserDialog>
-
-        <DeleteUserDialog>
-          <Button size="xs" variant="destructive">
-            <Trash2 class="size-4" />
-            <span>Delete the user</span>
-          </Button>
-        </DeleteUserDialog>
-      </div>
+              <DeleteUserDialog>
+                <Button size="xs" variant="destructive">
+                  <Trash2 class="size-4" />
+                  <span>Delete the user</span>
+                </Button>
+              </DeleteUserDialog>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </div>
   </div>
 </template>

@@ -7,5 +7,9 @@
   "bracketSpacing": true,
   "arrowParens": "avoid",
   "printWidth": 80,
-  "plugins": ["prettier-plugin-tailwindcss"]
+  "importOrder": ["<THIRD_PARTY_MODULES>", "", "^@/(.*)$", "", "^[./]"],
+  "plugins": [
+    "@ianvs/prettier-plugin-sort-imports",
+    "prettier-plugin-tailwindcss"
+  ]
 }

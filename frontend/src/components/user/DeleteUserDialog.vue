@@ -1,8 +1,12 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { Loader2 } from 'lucide-vue-next'
+import { ref } from 'vue'
+import { useRoute } from 'vue-router'
+import { toast } from 'vue-sonner'
+
+import { instance } from '@/api/instance'
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -12,39 +16,25 @@ import {
   AlertDialogTrigger
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
-import { instance } from '@/api/instance'
-import { useRoute, useRouter } from 'vue-router'
-import { Loader2 } from 'lucide-vue-next'
 
 const route = useRoute()
-const router = useRouter()
 
 const isOpen = ref(false)
-
-const submitLoading = ref(false)
-const submitError = ref(null)
+const isLoading = ref(false)
 
 const submit = async () => {
-  submitLoading.value = true
-  submitError.value = null
+  isLoading.value = true
 
   try {
     await instance.delete(`/users/${route.params.userId}`)
 
     isOpen.value = false
   } catch (result) {
-    submitError.value = result.response.data.errors
+    toast.error('Failed to delete user')
   } finally {
-    submitLoading.value = false
+    isLoading.value = false
   }
 }
-
-watch(isOpen, value => {
-  if (value) {
-    submitLoading.value = false
-    submitError.value = null
-  }
-})
 </script>
 
 <template>
@@ -63,8 +53,8 @@ watch(isOpen, value => {
 
       <AlertDialogFooter>
         <AlertDialogCancel>Cancel</AlertDialogCancel>
-        <Button :disabled="submitLoading" @click="submit">
-          <Loader2 v-if="submitLoading" class="size-4 animate-spin" />
+        <Button :disabled="isLoading" @click="submit">
+          <Loader2 v-if="isLoading" class="size-4 animate-spin" />
           <span>Continue</span>
         </Button>
       </AlertDialogFooter>

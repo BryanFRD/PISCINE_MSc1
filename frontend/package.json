@@ -12,6 +12,7 @@
     "lint:fix": "eslint \"src/**/*.{js,vue}\" --fix"
   },
   "dependencies": {
+    "@vee-validate/zod": "^4.13.2",
     "@vueuse/core": "^11.1.0",
     "axios": "^1.7.7",
     "class-variance-authority": "^0.7.0",
@@ -20,10 +21,14 @@
     "radix-vue": "^1.9.7",
     "tailwind-merge": "^2.5.3",
     "tailwindcss-animate": "^1.0.7",
+    "vee-validate": "^4.13.2",
     "vue": "^3.5.10",
-    "vue-router": "^4.4.5"
+    "vue-router": "^4.4.5",
+    "vue-sonner": "^1.2.1",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@ianvs/prettier-plugin-sort-imports": "^4.3.1",
     "@vitejs/plugin-vue": "^5.1.4",
     "@vue/eslint-config-prettier": "^10.0.0",
     "autoprefixer": "^10.4.20",

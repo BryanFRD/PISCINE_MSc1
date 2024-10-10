@@ -1,13 +1,14 @@
 <script setup>
-import { computed } from 'vue'
 import { AlertDialogCancel } from 'radix-vue'
-import { cn } from '@/lib/utils'
+import { computed } from 'vue'
+
 import { buttonVariants } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 const props = defineProps({
-  asChild: { type: Boolean },
-  as: { type: null, default: undefined },
-  class: { type: String, default: null }
+  asChild: { type: Boolean, required: false },
+  as: { type: null, required: false },
+  class: { type: null, required: false }
 })
 
 const delegatedProps = computed(() => {

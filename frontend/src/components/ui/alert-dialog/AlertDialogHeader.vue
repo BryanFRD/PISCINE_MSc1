@@ -2,7 +2,7 @@
 import { cn } from '@/lib/utils'
 
 const props = defineProps({
-  class: { type: String, default: null }
+  class: { type: null, required: false }
 })
 </script>
 

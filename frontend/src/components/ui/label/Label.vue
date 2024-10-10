@@ -1,12 +1,14 @@
 <script setup>
-import { computed } from 'vue'
 import { Label } from 'radix-vue'
+import { computed } from 'vue'
+
 import { cn } from '@/lib/utils'
 
 const props = defineProps({
-  for: { type: String, default: null },
-  asChild: { type: Boolean },
-  class: { type: String, default: null }
+  for: { type: String, required: false },
+  asChild: { type: Boolean, required: false },
+  as: { type: null, required: false },
+  class: { type: null, required: false }
 })
 
 const delegatedProps = computed(() => {

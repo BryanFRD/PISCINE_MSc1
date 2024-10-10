@@ -1,20 +1,21 @@
 <script setup>
-import { computed } from 'vue'
 import {
   AlertDialogContent,
   AlertDialogOverlay,
   AlertDialogPortal,
   useForwardPropsEmits
 } from 'radix-vue'
+import { computed } from 'vue'
+
 import { cn } from '@/lib/utils'
 
 const props = defineProps({
-  forceMount: { type: Boolean },
-  trapFocus: { type: Boolean },
-  disableOutsidePointerEvents: { type: Boolean },
-  asChild: { type: Boolean },
-  as: { type: null, default: undefined },
-  class: { type: String, default: null }
+  forceMount: { type: Boolean, required: false },
+  trapFocus: { type: Boolean, required: false },
+  disableOutsidePointerEvents: { type: Boolean, required: false },
+  asChild: { type: Boolean, required: false },
+  as: { type: null, required: false },
+  class: { type: null, required: false }
 })
 const emits = defineEmits([
   'escapeKeyDown',
