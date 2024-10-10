@@ -3,13 +3,6 @@ defmodule TimeManagerWeb.ClockJSON do
   alias TimeManager.Clocks.Clock
 
   @doc """
-  Renders a list of clocks.
-  """
-  def index(%{clocks: clocks}) do
-    for(clock <- clocks, do: data(clock))
-  end
-
-  @doc """
   Renders a single clock.
   """
   def show(%{clock: clock}) do

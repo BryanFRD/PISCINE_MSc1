@@ -2,6 +2,7 @@ defmodule TimeManagerWeb.WorkingtimeController do
   use TimeManagerWeb, :controller
   use PhoenixSwagger
 
+  alias TimeManager.Users
   alias TimeManager.Workingtimes
   alias TimeManager.Workingtimes.Workingtime
 
@@ -73,12 +74,18 @@ defmodule TimeManagerWeb.WorkingtimeController do
       end_time(:query, :datetime, "The end time of the working time (field: 'end')",
         required: false
       )
+
+      order_by(:query, :string, "Order by start or end time", required: false)
+      order(:query, :string, "Order direction", required: false)
     end
 
     response(200, "List of user workingtimes", Schema.ref(:Workingtimes))
+    response(404, "User not found")
   end
 
   def create(conn, workingtime_params) do
+    Users.get_user!(workingtime_params["user_id"])
+
     with {:ok, %Workingtime{} = workingtime} <-
            Workingtimes.create_workingtime(workingtime_params) do
       conn
@@ -103,6 +110,7 @@ defmodule TimeManagerWeb.WorkingtimeController do
     response(201, "Successfuly created workingtime", Schema.ref(:Workingtime))
     response(400, "Bad request")
     response(422, "Unprocessable entity")
+    response(404, "User not found")
   end
 
   def show(conn, %{"user_id" => user_id, "id" => id}) do

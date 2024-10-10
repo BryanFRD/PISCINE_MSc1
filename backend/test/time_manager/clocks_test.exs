@@ -16,26 +16,27 @@ defmodule TimeManager.ClocksTest do
       {:ok, user: user}
     end
 
-    test "list_clocks/0 returns all user clocks", %{user: user} do
-      clock = clock_fixture(%{user_id: user.id})
-      assert Clocks.list_user_clocks(user.id) == [clock]
-    end
-
-    test "create_clock/1 with valid data creates a clock", %{user: user} do
-      valid_attrs = %{status: true, time: ~N[2024-10-07 07:38:00], user_id: user.id}
-
-      assert {:ok, %Clock{} = clock} = Clocks.create_clock(valid_attrs)
-      assert clock.status == true
-      assert clock.time == ~N[2024-10-07 07:38:00]
+    test "get_user_clock/0 returns all user clocks", %{user: user} do
+      clock = Clocks.get_user_clock!(user.id)
       assert clock.user_id == user.id
     end
 
-    test "create_clock/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Clocks.create_clock(@invalid_attrs)
+    test "update_clock/1 with valid data updates a clock", %{user: user} do
+      clock = Clocks.get_user_clock!(user.id)
+      valid_attrs = %{status: true, time: ~N[2024-10-07 07:38:00]}
+
+      assert {:ok, %Clock{} = clock} = Clocks.update_clock(clock, valid_attrs)
+      assert clock.status == true
+      assert clock.time == ~N[2024-10-07 07:38:00]
+    end
+
+    test "update_clock/1 with invalid data returns error changeset", %{user: user} do
+      clock = Clocks.get_user_clock!(user.id)
+      assert {:error, %Ecto.Changeset{}} = Clocks.update_clock(clock, @invalid_attrs)
     end
 
     test "change_clock/1 returns a clock changeset", %{user: user} do
-      clock = clock_fixture(%{user_id: user.id})
+      clock = Clocks.get_user_clock!(user.id)
       assert %Ecto.Changeset{} = Clocks.change_clock(clock)
     end
   end

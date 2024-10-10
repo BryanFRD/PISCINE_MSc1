@@ -49,6 +49,9 @@
           "422": {
             "description": "Unprocessable entity"
           },
+          "404": {
+            "description": "User not found"
+          },
           "400": {
             "description": "Bad request"
           },
@@ -86,6 +89,9 @@
         ],
         "summary": "",
         "responses": {
+          "404": {
+            "description": "User not found"
+          },
           "200": {
             "schema": {
               "$ref": "#/definitions/Workingtimes"
@@ -114,6 +120,20 @@
             "name": "end_time",
             "in": "query",
             "description": "The end time of the working time (field: 'end')"
+          },
+          {
+            "type": "string",
+            "required": false,
+            "name": "order_by",
+            "in": "query",
+            "description": "Order by start or end time"
+          },
+          {
+            "type": "string",
+            "required": false,
+            "name": "order",
+            "in": "query",
+            "description": "Order direction"
           }
         ],
         "operationId": "TimeManagerWeb.WorkingtimeController.index",
@@ -356,7 +376,7 @@
       }
     },
     "/clocks/{user_id}": {
-      "post": {
+      "put": {
         "tags": [
           "Clock"
         ],
@@ -366,7 +386,7 @@
             "description": "Unprocessable entity"
           },
           "404": {
-            "description": "User not found"
+            "description": "Clock not found"
           },
           "400": {
             "description": "Bad request"
@@ -375,7 +395,7 @@
             "schema": {
               "$ref": "#/definitions/Clock"
             },
-            "description": "Successfuly created"
+            "description": "Successfuly updated"
           }
         },
         "parameters": [
@@ -396,33 +416,8 @@
             "description": "Clock attributes"
           }
         ],
-        "operationId": "TimeManagerWeb.ClockController.create",
-        "description": "Create a clock for a user"
-      },
-      "get": {
-        "tags": [
-          "Clock"
-        ],
-        "summary": "",
-        "responses": {
-          "200": {
-            "schema": {
-              "$ref": "#/definitions/Clocks"
-            },
-            "description": "Success"
-          }
-        },
-        "parameters": [
-          {
-            "type": "string",
-            "required": true,
-            "name": "user_id",
-            "in": "path",
-            "description": "Unique identifier for the user"
-          }
-        ],
-        "operationId": "TimeManagerWeb.ClockController.index",
-        "description": "Show all user's clocks"
+        "operationId": "TimeManagerWeb.ClockController.update",
+        "description": "Update the clock of a user"
       }
     }
   },
@@ -449,6 +444,29 @@
         "end": "2024-10-08 17:00:00"
       },
       "description": "Attributes for creating or updating a workingtime"
+    },
+    "UserAttributes": {
+      "type": "object",
+      "title": "UserAttributes",
+      "required": [
+        "username",
+        "email"
+      ],
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "The user's username"
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's email address"
+        }
+      },
+      "example": {
+        "username": "john_doe",
+        "email": "john.doe@email.com"
+      },
+      "description": "Attributes for creating or updating a user"
     },
     "ClockAttributes": {
       "type": "object",
@@ -520,76 +538,6 @@
       },
       "description": "A collection of Workingtimes"
     },
-    "Clock": {
-      "type": "object",
-      "title": "Clock",
-      "required": [
-        "user",
-        "status",
-        "time",
-        "id"
-      ],
-      "properties": {
-        "user": {
-          "type": "User",
-          "description": "The user creating this clock"
-        },
-        "time": {
-          "type": "datetime",
-          "description": "Time of day"
-        },
-        "status": {
-          "type": "boolean",
-          "description": "Indicates whether the clock is in or out"
-        },
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the clock"
-        }
-      },
-      "example": {
-        "user": {
-          "username": "john_doe",
-          "id": 1,
-          "email": "john.doe@email.com"
-        },
-        "time": "2024-10-08 12:00:00",
-        "status": true,
-        "id": 1
-      },
-      "description": "Timestamp of clock in or out for a user"
-    },
-    "Clocks": {
-      "type": "array",
-      "title": "Clocks",
-      "items": {
-        "$ref": "#/definitions/Clock"
-      },
-      "description": "A collection of Clocks"
-    },
-    "UserAttributes": {
-      "type": "object",
-      "title": "UserAttributes",
-      "required": [
-        "username",
-        "email"
-      ],
-      "properties": {
-        "username": {
-          "type": "string",
-          "description": "The user's username"
-        },
-        "email": {
-          "type": "string",
-          "description": "The user's email address"
-        }
-      },
-      "example": {
-        "username": "john_doe",
-        "email": "john.doe@email.com"
-      },
-      "description": "Attributes for creating or updating a user"
-    },
     "User": {
       "type": "object",
       "title": "User",
@@ -626,6 +574,44 @@
         "$ref": "#/definitions/User"
       },
       "description": "A collection of Users"
+    },
+    "Clock": {
+      "type": "object",
+      "title": "Clock",
+      "required": [
+        "user",
+        "status",
+        "id"
+      ],
+      "properties": {
+        "user": {
+          "type": "User",
+          "description": "The user creating this clock"
+        },
+        "time": {
+          "type": "datetime",
+          "description": "Time of day"
+        },
+        "status": {
+          "type": "boolean",
+          "description": "Indicates whether the clock is in or out"
+        },
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the clock"
+        }
+      },
+      "example": {
+        "user": {
+          "username": "john_doe",
+          "id": 1,
+          "email": "john.doe@email.com"
+        },
+        "time": "2024-10-08 12:00:00",
+        "status": true,
+        "id": 1
+      },
+      "description": "Timestamp of clock in or out for a user"
     }
   },
   "host": "localhost:4000",

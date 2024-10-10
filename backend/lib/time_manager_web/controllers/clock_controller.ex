@@ -16,7 +16,7 @@ defmodule TimeManagerWeb.ClockController do
 
           properties do
             id(:string, "Unique identifier for the clock", required: true)
-            time(:datetime, "Time of day", required: true)
+            time(:datetime, "Time of day", required: false)
             status(:boolean, "Indicates whether the clock is in or out", required: true)
             user(:User, "The user creating this clock", required: true)
           end
@@ -31,13 +31,6 @@ defmodule TimeManagerWeb.ClockController do
               email: "john.doe@email.com"
             }
           })
-        end,
-      Clocks:
-        swagger_schema do
-          title("Clocks")
-          description("A collection of Clocks")
-          type(:array)
-          items(Schema.ref(:Clock))
         end,
       ClockAttributes:
         swagger_schema do
@@ -57,45 +50,42 @@ defmodule TimeManagerWeb.ClockController do
     }
   end
 
-  def index(conn, %{"user_id" => user_id}) do
-    clocks = Clocks.list_user_clocks(user_id)
-    render(conn, :index, clocks: clocks)
+  def show(conn, %{"user_id" => user_id}) do
+    clock = Clocks.get_user_clock!(user_id)
+    render(conn, :show, clock: clock)
   end
 
   swagger_path :index do
     get("/clocks/{user_id}")
-    description("Show all user's clocks")
+    description("Show user clock")
 
     parameters do
       user_id(:path, :string, "Unique identifier for the user", required: true)
     end
 
-    response(200, "Success", Schema.ref(:Clocks))
+    response(200, "Success", Schema.ref(:Clock))
   end
 
-  def create(conn, %{"user_id" => user_id} = clock_params) do
-    clock_params = Map.put(clock_params, "user_id", user_id)
+  def update(conn, %{"user_id" => user_id} = clock_params) do
+    clock = Clocks.get_user_clock!(user_id)
 
-    with {:ok, %Clock{} = clock} <- Clocks.create_clock(clock_params) do
-      conn
-      |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/clocks/#{clock}")
-      |> render(:show, clock: clock)
+    with {:ok, %Clock{} = clock} <- Clocks.update_clock(clock, clock_params) do
+      render(conn, :show, clock: clock)
     end
   end
 
-  swagger_path :create do
-    post("/clocks/{user_id}")
-    description("Create a clock for a user")
+  swagger_path :update do
+    put("/clocks/{user_id}")
+    description("Update the clock of a user")
 
     parameters do
       user_id(:path, :string, "Unique identifier for the user", required: true)
       attributes(:body, Schema.ref(:ClockAttributes), "Clock attributes", required: true)
     end
 
-    response(201, "Successfuly created", Schema.ref(:Clock))
+    response(201, "Successfuly updated", Schema.ref(:Clock))
     response(400, "Bad request")
     response(422, "Unprocessable entity")
-    response(404, "User not found")
+    response(404, "Clock not found")
   end
 end

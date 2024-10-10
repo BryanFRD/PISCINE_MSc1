@@ -2,6 +2,7 @@ defmodule TimeManager.UsersTest do
   use TimeManager.DataCase
 
   alias TimeManager.Users
+  alias TimeManager.Clocks
 
   describe "users" do
     alias TimeManager.Users.User
@@ -12,12 +13,21 @@ defmodule TimeManager.UsersTest do
 
     test "list_users/0 returns all users" do
       user = user_fixture()
-      assert Users.list_users() == [user]
+      list_users = Users.list_users()
+
+      assert length(list_users) > 0
+      assert hd(list_users).id == user.id
+      assert hd(list_users).username == user.username
+      assert hd(list_users).email == user.email
     end
 
     test "get_user!/1 returns the user with given id" do
       user = user_fixture()
-      assert Users.get_user!(user.id) == user
+      get_user = Users.get_user!(user.id)
+
+      assert get_user.id == user.id
+      assert get_user.username == user.username
+      assert get_user.email == user.email
     end
 
     test "create_user/1 with valid data creates a user" do
@@ -26,6 +36,10 @@ defmodule TimeManager.UsersTest do
       assert {:ok, %User{} = user} = Users.create_user(valid_attrs)
       assert user.username == "john_doe"
       assert user.email == "john.doe@email.com"
+
+      clock = Clocks.get_user_clock!(user.id)
+      assert clock.user_id == user.id
+      assert clock.time == nil
     end
 
     test "create_user/1 with invalid data returns error changeset" do
@@ -44,7 +58,10 @@ defmodule TimeManager.UsersTest do
     test "update_user/2 with invalid data returns error changeset" do
       user = user_fixture()
       assert {:error, %Ecto.Changeset{}} = Users.update_user(user, @invalid_attrs)
-      assert user == Users.get_user!(user.id)
+
+      get_user = Users.get_user!(user.id)
+      assert get_user.username == user.username
+      assert get_user.email == user.email
     end
 
     test "delete_user/1 deletes the user" do

@@ -7,6 +7,7 @@ defmodule TimeManager.Users do
   alias TimeManager.Repo
 
   alias TimeManager.Users.User
+  alias TimeManager.Clocks.Clock
 
   @doc """
   Returns the list of users.
@@ -69,6 +70,7 @@ defmodule TimeManager.Users do
   def create_user(attrs \\ %{}) do
     %User{}
     |> User.changeset(attrs)
+    |> Ecto.Changeset.put_assoc(:clock, %Clock{})
     |> Repo.insert()
   end
 

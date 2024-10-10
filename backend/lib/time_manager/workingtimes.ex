@@ -5,6 +5,7 @@ defmodule TimeManager.Workingtimes do
 
   import Ecto.Query, warn: false
   alias TimeManager.Repo
+  alias TimeManager.Users
 
   alias TimeManager.Workingtimes.Workingtime
 
@@ -18,11 +19,14 @@ defmodule TimeManager.Workingtimes do
 
   """
   def list_user_workingtimes(user_id, params \\ %{}) do
+    user = Users.get_user!(user_id)
+
     query =
       Workingtime
-      |> where([w], w.user_id == ^user_id)
+      |> where([w], w.user_id == ^user.id)
       |> maybe_filter_by_start(params["start"])
       |> maybe_filter_by_end(params["end"])
+      |> maybe_order_by(params["order_by"], params["order"])
 
     Repo.all(query)
   end
@@ -37,6 +41,19 @@ defmodule TimeManager.Workingtimes do
 
   defp maybe_filter_by_end(query, end_param),
     do: from(w in query, where: field(w, :end) <= ^end_param)
+
+  # Order by
+  defp maybe_order_by(query, nil, _), do: query
+  defp maybe_order_by(query, "id", "asc"), do: from(w in query, order_by: [asc: w.id])
+  defp maybe_order_by(query, "id", "desc"), do: from(w in query, order_by: [desc: w.id])
+  defp maybe_order_by(query, "start", "asc"), do: from(w in query, order_by: [asc: w.start])
+  defp maybe_order_by(query, "start", "desc"), do: from(w in query, order_by: [desc: w.start])
+  defp maybe_order_by(query, "end", "asc"), do: from(w in query, order_by: [asc: field(w, :end)])
+
+  defp maybe_order_by(query, "end", "desc"),
+    do: from(w in query, order_by: [desc: field(w, :end)])
+
+  defp maybe_order_by(query, _, _), do: query
 
   @doc """
   Gets a single workingtime.

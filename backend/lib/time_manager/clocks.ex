@@ -9,34 +9,34 @@ defmodule TimeManager.Clocks do
   alias TimeManager.Clocks.Clock
 
   @doc """
-  Returns the list of clocks for a specific user.
+  Returns the clock for a specific user.
 
   ## Examples
-      iex> list_user_clocks(1)
-      [%Clock{}, ...]
+      iex> get_user_clock!(1)
+      %Clock{}
   """
-  def list_user_clocks(user_id) do
+  def get_user_clock!(user_id) do
     Clock
     |> where([c], c.user_id == ^user_id)
-    |> Repo.all()
+    |> Repo.one!()
   end
 
   @doc """
-  Creates a clock.
+  Updates a clock.
 
   ## Examples
 
-      iex> create_clock(%{field: value})
+      iex> update_clock(clock, %{field: new_value})
       {:ok, %Clock{}}
 
-      iex> create_clock(%{field: bad_value})
+      iex> update_clock(user, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_clock(attrs \\ %{}) do
-    %Clock{}
+  def update_clock(%Clock{} = clock, attrs) do
+    clock
     |> Clock.changeset(attrs)
-    |> Repo.insert()
+    |> Repo.update()
   end
 
   @doc """
