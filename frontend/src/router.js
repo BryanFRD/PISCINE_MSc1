@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+import ChartManager from './components/chartManager/ChartManager.vue'
 import ClockManager from './components/clocks/ClockManager.vue'
 import Layout from './components/layout/Layout.vue'
 import User from './components/user/User.vue'
@@ -30,6 +31,11 @@ const router = createRouter({
           path: '/working-time/:userId',
           name: 'working-time-create',
           component: CreateWorkingTime
+        },
+        {
+          path: '/chart-manager/:userId',
+          name: 'chart-manager',
+          component: ChartManager
         }
       ]
     }
