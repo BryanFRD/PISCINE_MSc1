@@ -56,7 +56,7 @@ const createWorkingTime = async userId => {
     result = await instance.post(`/workingtimes/${userId}`, body)
   } catch (err) {
     console.log(err)
-    workingTimeError.value = 'Failed to create a working time.'
+    workingTimeError.value = err.message
   }
   if (!workingTimeError.value) {
     router.push(`/${userId}/${result.data.id}`)

@@ -55,7 +55,7 @@ const updateWorkingTime = async workingTimeId => {
     const result = await instance.put(`/workingtimes/${workingTimeId}`, body)
   } catch (err) {
     console.log(err)
-    workingTimeError.value = 'Failed to update this working time.'
+    workingTimeError.value = err.message
   }
   if (!workingTimeError.value) {
     props.onSuccess()

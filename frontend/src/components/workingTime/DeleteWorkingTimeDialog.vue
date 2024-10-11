@@ -33,7 +33,7 @@ const deleteWorkingTime = async workingTimeId => {
     const result = await instance.delete(`/workingtimes/${workingTimeId}`)
   } catch (err) {
     console.log(err)
-    workingTimeError.value = 'Failed to update this working time.'
+    workingTimeError.value = err.message
   }
   if (!workingTimeError.value) {
     props.onSuccess()
