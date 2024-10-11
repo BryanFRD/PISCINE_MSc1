@@ -2,6 +2,7 @@
 import { Loader2 } from 'lucide-vue-next'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { toast } from 'vue-sonner'
 
 import { instance } from '@/api/instance'
 import {
@@ -20,33 +21,19 @@ const route = useRoute()
 
 const isOpen = ref(false)
 const isLoading = ref(false)
-const workingTimeError = ref(null)
 
-const props = defineProps({
-  workingTime: { type: Object, required: true },
-  onSuccess: { type: Function, default: () => {} }
-})
+const submit = async () => {
+  isLoading.value = true
 
-const deleteWorkingTime = async workingTimeId => {
-  console.log('FUNCTION')
   try {
-    const result = await instance.delete(`/workingtimes/${workingTimeId}`)
-  } catch (err) {
-    console.log(err)
-    workingTimeError.value = err.message
-  }
-  if (!workingTimeError.value) {
-    props.onSuccess()
+    await instance.delete(`/workingtimes/${workingTimeId}`)
+
     isOpen.value = false
+  } catch {
+    toast.error('Failed to delete working time')
+  } finally {
+    isLoading.value = false
   }
-}
-
-const button = () => {
-  console.log('Button ok is calling')
-}
-
-const closeDialog = () => {
-  isOpen.value = false
 }
 </script>
 
@@ -58,27 +45,19 @@ const closeDialog = () => {
 
     <AlertDialogContent>
       <AlertDialogHeader>
-        <AlertDialogTitle>Delete the working time</AlertDialogTitle>
+        <AlertDialogTitle>Delete Working Time</AlertDialogTitle>
+        <AlertDialogDescription>
+          Are you sure you want to delete this working time?
+        </AlertDialogDescription>
       </AlertDialogHeader>
+
       <AlertDialogFooter>
-        <Button
-          :disabled="isLoading"
-          @click="deleteWorkingTime(props.workingTime.id)"
-        >
+        <AlertDialogCancel>Cancel</AlertDialogCancel>
+        <Button :disabled="isLoading" @click="submit">
           <Loader2 v-if="isLoading" class="size-4 animate-spin" />
-          <span>Confirm</span>
-        </Button>
-        <Button :disabled="isLoading" @click="closeDialog()">
-          <Loader2 v-if="isLoading" class="size-4 animate-spin" />
-          <span>Cancel</span>
+          <span>Continue</span>
         </Button>
       </AlertDialogFooter>
     </AlertDialogContent>
   </AlertDialog>
 </template>
-
-<style>
-.errorMsg {
-  color: red;
-}
-</style>

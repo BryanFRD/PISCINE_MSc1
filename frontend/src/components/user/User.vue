@@ -26,6 +26,8 @@ const user = ref({
 const userLoading = ref(false)
 const userError = ref(null)
 
+const userInitialized = ref(false)
+
 const getUser = async userId => {
   userLoading.value = true
   userError.value = null
@@ -34,6 +36,7 @@ const getUser = async userId => {
     const result = await instance.get(`/users/${userId}`)
 
     user.value = result.data
+    userInitialized.value = true
   } catch {
     userError.value = 'Failed to fetch user'
   } finally {
@@ -49,7 +52,10 @@ onMounted(() => {
 
 <template>
   <div class="rounded-md bg-zinc-100 p-4 shadow">
-    <div v-if="userLoading" class="flex items-center gap-x-2">
+    <div
+      v-if="userLoading && !userInitialized"
+      class="flex items-center gap-x-2"
+    >
       <Loader2 class="size-4 animate-spin" />
       <span>Loading...</span>
     </div>
@@ -94,14 +100,14 @@ onMounted(() => {
             >
               <Button size="xs">
                 <Edit3 class="size-4" />
-                <span>Edit the user</span>
+                <span>Edit</span>
               </Button>
             </EditUserDialog>
 
             <DeleteUserDialog>
               <Button size="xs" variant="destructive">
                 <Trash2 class="size-4" />
-                <span>Delete the user</span>
+                <span>Delete</span>
               </Button>
             </DeleteUserDialog>
           </div>

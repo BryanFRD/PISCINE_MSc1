@@ -29,7 +29,7 @@ const submit = async () => {
     await instance.delete(`/users/${route.params.userId}`)
 
     isOpen.value = false
-  } catch (result) {
+  } catch {
     toast.error('Failed to delete user')
   } finally {
     isLoading.value = false

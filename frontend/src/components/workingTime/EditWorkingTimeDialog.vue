@@ -1,7 +1,8 @@
 <script setup>
+import { CalendarDate } from '@internationalized/date'
 import { toTypedSchema } from '@vee-validate/zod'
-import { Loader2 } from 'lucide-vue-next'
-import moment from 'moment'
+import { format } from 'date-fns'
+import { Edit3, Loader2 } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
@@ -25,9 +26,6 @@ const route = useRoute()
 
 const isOpen = ref(false)
 const isLoading = ref(false)
-const workingTimeError = ref(null)
-
-const defaultValues = ref(null)
 
 const props = defineProps({
   workingTime: { type: Object, required: true },
@@ -35,9 +33,9 @@ const props = defineProps({
 })
 
 const schema = z.object({
-  startDay: z.string().date(),
+  startDate: z.coerce.date(),
   startTime: z.string().time(),
-  endDay: z.string().date(),
+  endDate: z.coerce.date(),
   endTime: z.string().time()
 })
 
@@ -45,38 +43,63 @@ const form = useForm({
   validationSchema: toTypedSchema(schema)
 })
 
-const updateWorkingTime = async workingTimeId => {
-  console.log(form.values)
-  const body = {
-    start: `${form.values.startDay} ${form.values.startTime}`,
-    end: `${form.values.endDay} ${form.values.endTime}`
-  }
+const onSubmit = async values => {
+  isLoading.value = true
+
   try {
-    const result = await instance.put(`/workingtimes/${workingTimeId}`, body)
-  } catch (err) {
-    console.log(err)
-    workingTimeError.value = err.message
-  }
-  if (!workingTimeError.value) {
+    const start = new Date(values.startDate)
+    const startTime = values.startTime.split(':')
+    start.setHours(startTime[0])
+    start.setMinutes(startTime[1])
+    start.setSeconds(startTime[2])
+
+    const end = new Date(values.endDate)
+    const endTime = values.endTime.split(':')
+    end.setHours(endTime[0])
+    end.setMinutes(endTime[1])
+    end.setSeconds(endTime[2])
+
+    const body = {
+      start: start.toISOString(),
+      end: end.toISOString()
+    }
+
+    await instance.put(`/workingtimes/${route.params.workingTimeId}`, body)
+
     props.onSuccess()
     isOpen.value = false
-  }
-}
 
-const reassignValues = values => {
-  defaultValues.value = {
-    startDay: moment(values.start).format('YYYY-MM-DD'),
-    startTime: moment(values.start).format('hh:mm:ss'),
-    endDay: moment(values.end).format('YYYY-MM-DD'),
-    endTime: moment(values.end).format('hh:mm:ss')
+    toast.success('Working time updated successfully')
+  } catch (result) {
+    form.setErrors({
+      startDate: result.response.data.errors.start,
+      endDate: result.response.data.errors.end
+    })
+  } finally {
+    isLoading.value = false
   }
 }
 
 watch(
   () => [props.workingTime, isOpen.value],
-  async () => {
-    await reassignValues(props.workingTime)
-    await form.setValues(defaultValues.value)
+  () => {
+    const startDate = new Date(props.workingTime.start)
+    const endDate = new Date(props.workingTime.end)
+
+    form.setValues({
+      startDate: new CalendarDate(
+        startDate.getFullYear(),
+        startDate.getMonth() + 1,
+        startDate.getDate()
+      ),
+      startTime: format(new Date(props.workingTime.start), 'HH:mm:ss'),
+      endDate: new CalendarDate(
+        endDate.getFullYear(),
+        endDate.getMonth() + 1,
+        endDate.getDate()
+      ),
+      endTime: format(new Date(props.workingTime.end), 'HH:mm:ss')
+    })
   }
 )
 </script>
@@ -99,14 +122,12 @@ watch(
         class="space-y-6 py-4"
         :schema="schema"
         :form="form"
-        @submit="updateWorkingTime(props.workingTime.id)"
+        @submit="onSubmit"
       >
-        <div class="errorMsg" :if="workingTimeError">
-          {{ workingTimeError }}
-        </div>
         <DialogFooter>
           <Button type="submit" :disabled="isLoading">
             <Loader2 v-if="isLoading" class="size-4 animate-spin" />
+            <Edit3 v-else class="size-4" />
             <span>Update</span>
           </Button>
         </DialogFooter>
@@ -114,9 +135,3 @@ watch(
     </DialogContent>
   </Dialog>
 </template>
-
-<style>
-.errorMsg {
-  color: red;
-}
-</style>

@@ -1,6 +1,6 @@
 <script setup>
 import { format } from 'date-fns'
-import { Loader2 } from 'lucide-vue-next'
+import { Eye, Loader2 } from 'lucide-vue-next'
 import { onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -16,6 +16,8 @@ import {
   TableRow
 } from '@/components/ui/table'
 
+import { buttonVariants } from '../ui/button'
+
 const route = useRoute()
 
 const workingTimes = ref([])
@@ -29,7 +31,9 @@ const getWorkingTimes = async userId => {
   workingTimesError.value = null
 
   try {
-    const result = await instance.get(`/workingtimes/${userId}`)
+    const result = await instance.get(
+      `/workingtimes/${userId}?order_by=start&order=desc`
+    )
 
     workingTimes.value = result.data
   } catch {
@@ -66,12 +70,28 @@ onMounted(() => {
         <TableRow>
           <TableHead>Start</TableHead>
           <TableHead>End</TableHead>
+          <TableHead />
         </TableRow>
       </TableHeader>
       <TableBody>
-        <TableRow v-for="(workingTime, index) in workingTimes" :key="index">
+        <TableRow v-for="workingTime in workingTimes" :key="workingTime.id">
           <TableCell>{{ formattedDate(workingTime.start) }}</TableCell>
           <TableCell>{{ formattedDate(workingTime.end) }}</TableCell>
+
+          <TableCell>
+            <RouterLink
+              :to="{
+                name: 'working-time',
+                params: {
+                  userId: route.params.userId,
+                  workingTimeId: workingTime.id
+                }
+              }"
+              :class="buttonVariants({ size: 'iconXs', variant: 'none' })"
+            >
+              <Eye class="size-5" />
+            </RouterLink>
+          </TableCell>
         </TableRow>
       </TableBody>
     </Table>

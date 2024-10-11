@@ -3,7 +3,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import ClockManager from './components/clocks/ClockManager.vue'
 import Layout from './components/layout/Layout.vue'
 import User from './components/user/User.vue'
-import WorkingTime from './components/workingTime/WorkingTime.vue'
+import CreateWorkingTime from './components/workingTime/CreateWorkingTime.vue'
+import WorkingTimeManager from './components/workingTime/WorkingTimeManager.vue'
 import WorkingTimes from './components/workingTimes/WorkingTimes.vue'
 
 const router = createRouter({
@@ -23,7 +24,12 @@ const router = createRouter({
         {
           path: '/working-time/:userId/:workingTimeId',
           name: 'working-time',
-          component: WorkingTime
+          component: WorkingTimeManager
+        },
+        {
+          path: '/working-time/:userId',
+          name: 'working-time-create',
+          component: CreateWorkingTime
         }
       ]
     }
