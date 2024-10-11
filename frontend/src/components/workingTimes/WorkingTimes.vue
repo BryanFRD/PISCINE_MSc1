@@ -46,36 +46,34 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="mx-auto my-2 w-full max-w-xl">
-    <div class="rounded-md bg-zinc-100 p-4 shadow">
-      <div v-if="workingTimesLoading" class="flex items-center gap-x-2">
-        <Loader2 class="size-4 animate-spin" />
-        <span>Loading...</span>
-      </div>
-      <div v-else-if="workingTimesError">
-        {{ workingTimesError }}
-      </div>
-
-      <Table v-else>
-        <TableEmpty v-if="workingTimes.length === 0" :colspan="2">
-          No working time
-        </TableEmpty>
-
-        <TableCaption>The list of working times.</TableCaption>
-
-        <TableHeader>
-          <TableRow>
-            <TableHead>Start</TableHead>
-            <TableHead>End</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <TableRow v-for="(workingTime, index) in workingTimes" :key="index">
-            <TableCell>{{ formattedDate(workingTime.start) }}</TableCell>
-            <TableCell>{{ formattedDate(workingTime.end) }}</TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
+  <div class="rounded-md bg-zinc-100 p-4 shadow">
+    <div v-if="workingTimesLoading" class="flex items-center gap-x-2">
+      <Loader2 class="size-4 animate-spin" />
+      <span>Loading...</span>
     </div>
+    <div v-else-if="workingTimesError">
+      {{ workingTimesError }}
+    </div>
+
+    <Table v-else>
+      <TableEmpty v-if="workingTimes.length === 0" :colspan="2">
+        No working time
+      </TableEmpty>
+
+      <TableCaption>The list of working times.</TableCaption>
+
+      <TableHeader>
+        <TableRow>
+          <TableHead>Start</TableHead>
+          <TableHead>End</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow v-for="(workingTime, index) in workingTimes" :key="index">
+          <TableCell>{{ formattedDate(workingTime.start) }}</TableCell>
+          <TableCell>{{ formattedDate(workingTime.end) }}</TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
   </div>
 </template>

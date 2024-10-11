@@ -1,5 +1,5 @@
 <script setup>
-import UserView from '@/components/user/UserView.vue'
+import UserView from '@/components/user/User.vue'
 </script>
 
 <template>
