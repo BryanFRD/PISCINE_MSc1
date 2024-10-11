@@ -16,11 +16,24 @@ defmodule TimeManager.Workingtimes.Workingtime do
     workingtime
     |> cast(attrs, [:start, :end, :user_id])
     |> validate_required([:start, :end, :user_id])
+    |> validate_start_before_end()
   end
 
   def update_changeset(workingtime, attrs) do
     workingtime
     |> cast(attrs, [:start, :end])
     |> validate_required([:start, :end])
+    |> validate_start_before_end()
+  end
+
+  defp validate_start_before_end(changeset) do
+    start = get_field(changeset, :start)
+    end_time = get_field(changeset, :end)
+
+    if start && end_time && start >= end_time do
+      add_error(changeset, :start, "must be before end time")
+    else
+      changeset
+    end
   end
 end
