@@ -1,23 +1,20 @@
 <script setup>
-import { toTypedSchema } from '@vee-validate/zod'
 import { Loader2 } from 'lucide-vue-next'
-import { useForm } from 'vee-validate'
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { toast } from 'vue-sonner'
-import { z } from 'zod'
 
 import { instance } from '@/api/instance'
-import { Button } from '@/components/ui/button'
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog'
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
 
 const route = useRoute()
 
@@ -31,6 +28,7 @@ const props = defineProps({
 })
 
 const deleteWorkingTime = async workingTimeId => {
+  console.log('FUNCTION')
   try {
     const result = await instance.delete(`/workingtimes/${workingTimeId}`)
   } catch (err) {
@@ -43,36 +41,40 @@ const deleteWorkingTime = async workingTimeId => {
   }
 }
 
+const button = () => {
+  console.log('Button ok is calling')
+}
+
 const closeDialog = () => {
   isOpen.value = false
 }
 </script>
 
 <template>
-  <Dialog v-model:open="isOpen">
-    <DialogTrigger as-child>
+  <AlertDialog v-model:open="isOpen">
+    <AlertDialogTrigger as-child>
       <slot />
-    </DialogTrigger>
+    </AlertDialogTrigger>
 
-    <DialogContent>
-      <DialogHeader>
-        <DialogTitle>Delete the working time</DialogTitle>
-      </DialogHeader>
-      <DialogFooter>
+    <AlertDialogContent>
+      <AlertDialogHeader>
+        <AlertDialogTitle>Delete the working time</AlertDialogTitle>
+      </AlertDialogHeader>
+      <AlertDialogFooter>
         <Button
-          :click="deleteWorkingTime(props.workingTime.id)"
           :disabled="isLoading"
+          @click="deleteWorkingTime(props.workingTime.id)"
         >
           <Loader2 v-if="isLoading" class="size-4 animate-spin" />
           <span>Confirm</span>
         </Button>
-        <Button :click="closeDialog()" :disabled="isLoading">
+        <Button :disabled="isLoading" @click="closeDialog()">
           <Loader2 v-if="isLoading" class="size-4 animate-spin" />
           <span>Cancel</span>
         </Button>
-      </DialogFooter>
-    </DialogContent>
-  </Dialog>
+      </AlertDialogFooter>
+    </AlertDialogContent>
+  </AlertDialog>
 </template>
 
 <style>

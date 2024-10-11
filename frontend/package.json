@@ -12,6 +12,7 @@
     "lint:fix": "eslint \"src/**/*.{js,vue}\" --fix"
   },
   "dependencies": {
+    "@tanstack/vue-table": "^8.20.5",
     "@vee-validate/zod": "^4.13.2",
     "@vueuse/core": "^11.1.0",
     "axios": "^1.7.7",

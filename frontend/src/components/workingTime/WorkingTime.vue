@@ -3,7 +3,7 @@
 import moment from "moment";
 import { Edit3, Loader2, Plus, Trash2, Undo, User2 } from "lucide-vue-next";
 import { onMounted, ref, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,12 +14,23 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { Separator } from "@/components/ui/separator";
 
 import { instance } from "../../api/instance";
 import EditWorkingTimeDialog from "./EditWorkingTimeDialog.vue";
+import DeleteWorkingTimeDialog from "./DeleteWorkingTimeDialog.vue";
+import CreateWorkingTimeDialog from './CreateWorkingTimeDialog.vue';
 
 const route = useRoute();
+const router = useRouter();
 
 const workingTime = ref({
   id: null,
@@ -34,6 +45,8 @@ const workingTimeStart = ref(null);
 const workingTimeEnd = ref(null);
 
 const getWorkingTime = async (userId, workingTimeId) => {
+    console.log("get called")
+    console.log(userId, workingTimeId)
   try {
     workingTimeLoading.value = true;
     const result = await instance.get(`/workingtimes/${userId}/${workingTimeId}`);
@@ -52,30 +65,28 @@ const getWorkingTime = async (userId, workingTimeId) => {
 
 const getNewestWorkingTime = async (userId) => {
     try {
-    workingTimeLoading.value = true;
+   // workingTimeLoading.value = true;
     const result = await instance.get(`/workingtimes/${userId}`); 
-    workingTime.value.id = result.data[0].id;
-    workingTime.value.start = result.data[0].start;
-    workingTime.value.end = result.data[0].end;
+    router.push(`/${userId}/${result.data[0].id}`);
     } catch (err) {
         console.log(err)
         workingTimeError.value = "Failed to fetch working time";
-    } finally {
-    workingTimeLoading.value = false;
-    workingTimeDay.value = moment(workingTime.value.start).format("MMMM Do YYYY");
-    workingTimeStart.value = moment(workingTime.value.start).format("HH:mm");
-    workingTimeEnd.value = moment(workingTime.value.end).format("HH:mm");
-  }
+    }
 }
+watch(() => route.params.workingTimeId,
+(oldId, newId) => {
+    console.log("fetch new trig")
+    getWorkingTime(route.params.userId, route.params.workingTimeId);
 
-watch(() => route.params.userId, route.params.workingTimeId, getWorkingTime);
+})
+
 onMounted(() => {
   getWorkingTime(route.params.userId, route.params.workingTimeId);
 });
 </script>
 
 <template>
-  <div class="mx-auto my-2 w-[380px]">
+  <div class="mx-auto my-2 w-[430px]">
     <div class="rounded-md bg-zinc-100 p-4 shadow">
       <div v-if="workingTimeLoading" class="flex items-center gap-x-2">
         <Loader2 class="size-4 animate-spin" />
@@ -86,30 +97,70 @@ onMounted(() => {
         {{ workingTimeError }}
       </div>
       <div v-else-if="!workingTimeError">
-        <Card class="w-[350px]">
+        <Card class="w-[400px]">
           <CardHeader>
             <CardTitle>Working Time</CardTitle>
             <CardDescription>{{ workingTimeDay }}</CardDescription>
           </CardHeader>
           <CardContent>
-            <div class="timesContainer">
-              <h4 class="time">Entry time : {{ workingTimeStart }}</h4>
-              <Separator class="separator" orientation="vertical" />
-              <h4 class="time">Exit time : {{ workingTimeEnd }}</h4>
-            </div>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead class="text-center"> Entry time </TableHead>
+                  <TableHead class="text-center">Exit time</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell class="text-center font-medium">
+                    {{ workingTimeStart }}
+                  </TableCell>
+                  <TableCell class="text-center font-medium">
+                    {{ workingTimeEnd }}
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
           </CardContent>
           <CardFooter class="flex justify-between px-6 pb-6">
+            <CreateWorkingTimeDialog
+              :on-success="
+                () =>
+                  getWorkingTime(
+                    route.params.userId,
+                    route.params.workingTimeId
+                  )
+              "
+            >
+              <Button variant="secondary">
+                <Plus class="size-4" />
+                Add new
+              </Button>
+            </CreateWorkingTimeDialog>
             <EditWorkingTimeDialog
-              :workingTime="workingTime"
-              :onSuccess="() => getWorkingTime(route.params.userId, route.params.workingTimeId)"
+              :working-time="workingTime"
+              :on-success="
+                () =>
+                  getWorkingTime(
+                    route.params.userId,
+                    route.params.workingTimeId
+                  )
+              "
             >
-              <Button variant="outline"> Edit </Button>
+              <Button variant="outline">
+                <Edit3 class="size-4" />
+                Edit
+              </Button>
             </EditWorkingTimeDialog>
+
             <DeleteWorkingTimeDialog
-              :workingTime="workingTime"
-              :onSuccess="() => getNewestWorkingTime(route.params.userId)"
+              :working-time="workingTime"
+              :on-success="() => getNewestWorkingTime(route.params.userId)"
             >
-              <Button variant="destructive"> Delete </Button>
+              <Button variant="destructive">
+                <Trash2 class="size-4" />
+                Delete
+              </Button>
             </DeleteWorkingTimeDialog>
           </CardFooter>
         </Card>
@@ -117,14 +168,3 @@ onMounted(() => {
     </div>
   </div>
 </template>
-
-<style>
-.timesContainer {
-  display: flex;
-  justify-content: space-evenly;
-}
-
-.separator {
-  height: 100%;
-}
-</style>
