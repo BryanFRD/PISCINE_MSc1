@@ -1,0 +1,46 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: postgres_password
+      POSTGRES_USER: postgres_user
+      POSTGRES_DB: time_manager_dev
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+  
+  backend:
+    build: ./backend
+    restart: always
+    ports:
+      - 4005:4000
+    environment:
+      - DATABASE_URL=ecto://user:password@database:5432/database
+      - SECRET_KEY_BASE=UVEpCoG1NUs/A+Gylf6624lJnLb7G2ozGxX79VejR34KyOo+i3b1M0kT4HtOgonR
+      - PHX_HOST=localhost
+      - PORT=4000
+      - ECTO_IPV6=true
+      - MIX_ENV=prod
+    depends_on:
+      - db
+  
+  frontend:
+    build: ./frontend
+    restart: always
+    ports:
+      - 5179:5173
+    environment:
+      VUE_API_URL: http://localhost:4005/api
+    
+volumes:
+  db-data:
