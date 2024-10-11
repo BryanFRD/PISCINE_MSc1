@@ -36,7 +36,10 @@ Link :
 | ``cd T-POO-700-LIL_2/frontend ``   |  ``cd T-POO-700-LIL_2/backend ``   |
 
 
+## Continuous Integration
+Continuous Integration available [here](https://github.com/BryanFRD/PISCINE_MSc1) 
 
+[![Build Status](https://travis-ci.com/BryanFRD/PISCINE_MSc1.svg?branch=master)](https://travis-ci.com/BryanFRD/PISCINE_MSc1)
 
 ## Authors
 
