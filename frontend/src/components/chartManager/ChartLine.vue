@@ -1,36 +1,41 @@
 <script setup>
 import {
-  BarElement,
   CategoryScale,
   Chart as ChartJS,
   Legend,
   LinearScale,
+  LineElement,
+  PointElement,
   Title,
   Tooltip
 } from 'chart.js'
-import { add, differenceInMinutes, format, subDays } from 'date-fns'
+import {
+  differenceInMinutes,
+  endOfToday,
+  format,
+  getDate,
+  startOfMonth
+} from 'date-fns'
 import { enUS } from 'date-fns/locale'
 import { Loader2 } from 'lucide-vue-next'
 import { computed, onMounted, ref, watch } from 'vue'
-import { Bar } from 'vue-chartjs'
+import { Line } from 'vue-chartjs'
 import { useRoute } from 'vue-router'
 
 import { instance } from '@/api/instance'
 
-ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
-// chart bar who whow last seven day working hour
 const route = useRoute()
+const firstMonthDay = startOfMonth(new Date())
+const today = endOfToday()
 const workingTimes = ref([])
 const workingTimesLoading = ref(false)
 const workingTimesError = ref(null)
-const dm = add(new Date(), { days: 1 })
 const getWorkingTimes = async userId => {
   workingTimesLoading.value = true
   workingTimesError.value = null
-
   try {
     const result = await instance.get(
-      `/workingtimes/${userId}?order_by=start&order=asc&start=${subDays(new Date(), 7).toISOString()}&end=${dm.toISOString()}`
+      `/workingtimes/${userId}?order_by=start&order=asc&start=${firstMonthDay.toISOString()}&end=${today.toISOString()}`
     )
     workingTimes.value = result.data
   } catch {
@@ -41,37 +46,44 @@ const getWorkingTimes = async userId => {
 }
 //only have  the name and Month/day
 const formattedDateToDay = date =>
-  format(new Date(date), 'eeee MM/dd', { locale: enUS })
+  format(new Date(date), 'MM/dd', { locale: enUS })
 
 //for the chart label's
-const lastDaysName = () => {
-  const daysList = []
-  for (let i = 0; i < 7; i++) {
-    const currentDay = subDays(new Date(), i)
-    daysList.push(formattedDateToDay(currentDay))
+const daysOfMonth = () => {
+  const days = []
+  const daysInMonth = getDate(today)
+  for (let i = 1; i <= daysInMonth; i++) {
+    days.push(
+      formattedDateToDay(
+        new Date(new Date().getFullYear(), new Date().getMonth(), i)
+      )
+    )
   }
-  return daysList.reverse()
+  return days
 }
-//to accumulate working hours per day
+
 const workHoursPerDay = computed(() => {
-  const hours = Array(7).fill(0)
+  const daysInMonth = getDate(today)
+  const hours = Array(daysInMonth).fill(0)
+
   workingTimes.value.forEach(time => {
     const startDate = new Date(time.start)
     const endDate = new Date(time.end)
-    const dayIndex = startDate.getDay()
+    const dayIndex = startDate.getDate() - 1
     const minutesWorked = differenceInMinutes(endDate, startDate)
     hours[dayIndex] += minutesWorked / 60
   })
+
   return hours
 })
 
-const labels = lastDaysName()
-//chart params
+const labels = daysOfMonth()
+
 const chartData = computed(() => ({
   labels,
   datasets: [
     {
-      label: 'Working Hours For The Last 7 Days',
+      label: 'Monthly Working Hours',
       data: workHoursPerDay.value,
       backgroundColor: 'rgba(0, 0, 0, 0.300)',
       borderColor: 'rgba(0,0,0)',
@@ -82,7 +94,20 @@ const chartData = computed(() => ({
 
 const chartOptions = {
   responsive: true,
+  maintainAspectRatio: true,
+  plugins: {
+    legend: {
+      display: false,
+      position: 'top'
+    }
+  },
   scales: {
+    x: {
+      title: {
+        display: true,
+        text: 'Day'
+      }
+    },
     y: {
       title: {
         display: true,
@@ -92,6 +117,16 @@ const chartOptions = {
     }
   }
 }
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+)
 
 watch(() => route.params.userId, getWorkingTimes)
 onMounted(() => {
@@ -111,8 +146,9 @@ onMounted(() => {
 
   <div v-else>
     <h1 style="text-align: center; margin-bottom: 10px; font-weight: bold">
-      Working Hours For The Last 7 Days
+      Month Working Time
     </h1>
-    <Bar :data="chartData" :options="chartOptions"></Bar>
+
+    <Line :data="chartData" :options="chartOptions" />
   </div>
 </template>
