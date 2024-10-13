@@ -1,7 +1,6 @@
 <script setup>
 import { Loader2 } from 'lucide-vue-next'
 import { ref } from 'vue'
-import { useRoute } from 'vue-router'
 import { toast } from 'vue-sonner'
 
 import { instance } from '@/api/instance'
@@ -17,7 +16,12 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 
-const route = useRoute()
+const props = defineProps({
+  workingTimeId: {
+    type: Number,
+    required: true
+  }
+})
 
 const isOpen = ref(false)
 const isLoading = ref(false)
@@ -26,7 +30,7 @@ const submit = async () => {
   isLoading.value = true
 
   try {
-    await instance.delete(`/workingtimes/${workingTimeId}`)
+    await instance.delete(`/workingtimes/${props.workingTimeId}`)
 
     isOpen.value = false
   } catch {

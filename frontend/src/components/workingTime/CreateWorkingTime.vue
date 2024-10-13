@@ -1,9 +1,8 @@
 <script setup>
 import { toTypedSchema } from '@vee-validate/zod'
 import { Edit3, Loader2 } from 'lucide-vue-next'
-// import moment from 'moment'
 import { useForm } from 'vee-validate'
-import { ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { toast } from 'vue-sonner'
 import { z } from 'zod'
@@ -14,6 +13,8 @@ import { Button } from '@/components/ui/button'
 
 const route = useRoute()
 const router = useRouter()
+
+const userId = computed(() => route.params.userId)
 
 const isOpen = ref(false)
 const isLoading = ref(false)
@@ -50,12 +51,9 @@ const onSubmit = async values => {
       end: end.toISOString()
     }
 
-    const result = await instance.post(
-      `/workingtimes/${route.params.userId}`,
-      body
-    )
+    const result = await instance.post(`/workingtimes/${userId.value}`, body)
 
-    router.push(`working-time/${route.params.userId}/${result.data.id}`)
+    router.push(`working-time/${userId.value}/${result.data.id}`)
 
     isOpen.value = false
     toast.success('Working time created successfully')
@@ -71,7 +69,7 @@ const onSubmit = async values => {
 </script>
 
 <template>
-  <h2 class="text-xl font-semibold">New Working Time</h2>
+  <h2 class="mb-4 text-3xl font-bold">New Working Time</h2>
 
   <AutoForm
     :field-config="{

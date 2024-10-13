@@ -1,14 +1,15 @@
 <script setup>
 import { format } from 'date-fns'
-import { Eye, Loader2 } from 'lucide-vue-next'
-import { onMounted, ref, watch } from 'vue'
+import { Eye, Plus } from 'lucide-vue-next'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 import { instance } from '@/api/instance'
+import { buttonVariants } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableEmpty,
   TableHead,
@@ -16,23 +17,23 @@ import {
   TableRow
 } from '@/components/ui/table'
 
-import { buttonVariants } from '../ui/button'
-
 const route = useRoute()
+
+const userId = computed(() => route.params.userId)
 
 const workingTimes = ref([])
 const workingTimesLoading = ref(false)
 const workingTimesError = ref(null)
 
-const formattedDate = date => format(new Date(date), 'dd/MM/yyyy HH:mm:ss')
+const formatDate = date => format(new Date(date), 'MMMM dd, yyyy hh:mm:ss aa')
 
-const getWorkingTimes = async userId => {
+const getWorkingTimes = async () => {
   workingTimesLoading.value = true
   workingTimesError.value = null
 
   try {
     const result = await instance.get(
-      `/workingtimes/${userId}?order_by=start&order=desc`
+      `/workingtimes/${userId.value}?order_by=start&order=desc`
     )
 
     workingTimes.value = result.data
@@ -43,31 +44,47 @@ const getWorkingTimes = async userId => {
   }
 }
 
-watch(() => route.params.userId, getWorkingTimes)
-onMounted(() => {
-  getWorkingTimes(route.params.userId)
-})
+watch(
+  () => userId.value,
+  () => getWorkingTimes()
+)
+onMounted(() => getWorkingTimes())
 </script>
 
 <template>
-  <div class="rounded-md bg-zinc-100 p-4 shadow">
-    <div v-if="workingTimesLoading" class="flex items-center gap-x-2">
-      <Loader2 class="size-4 animate-spin" />
-      <span>Loading...</span>
-    </div>
-    <div v-else-if="workingTimesError">
-      {{ workingTimesError }}
+  <div v-if="workingTimesLoading" class="space-y-4">
+    <Skeleton class="h-10 w-1/2" />
+    <Skeleton class="h-40 w-full" />
+  </div>
+
+  <div v-else-if="workingTimesError">
+    {{ workingTimesError }}
+  </div>
+
+  <template v-else>
+    <div class="mb-4 flex items-center justify-between">
+      <h1 class="text-3xl font-bold">Working Times</h1>
+
+      <RouterLink
+        :to="{
+          name: 'working-time-create',
+          params: { userId }
+        }"
+        :class="buttonVariants({ size: 'sm' })"
+      >
+        <Plus class="size-4" />
+        <span>Create</span>
+      </RouterLink>
     </div>
 
-    <Table v-else>
-      <TableEmpty v-if="workingTimes.length === 0" :colspan="2">
+    <Table>
+      <TableEmpty v-if="workingTimes.length === 0" :colspan="3">
         No working time
       </TableEmpty>
 
-      <TableCaption>The list of working times.</TableCaption>
-
       <TableHeader>
         <TableRow>
+          <TableHead class="font-semibold">#</TableHead>
           <TableHead>Start</TableHead>
           <TableHead>End</TableHead>
           <TableHead />
@@ -75,19 +92,17 @@ onMounted(() => {
       </TableHeader>
       <TableBody>
         <TableRow v-for="workingTime in workingTimes" :key="workingTime.id">
-          <TableCell>{{ formattedDate(workingTime.start) }}</TableCell>
-          <TableCell>{{ formattedDate(workingTime.end) }}</TableCell>
+          <TableCell class="font-semibold">{{ workingTime.id }}</TableCell>
+          <TableCell>{{ formatDate(workingTime.start) }}</TableCell>
+          <TableCell>{{ formatDate(workingTime.end) }}</TableCell>
 
           <TableCell>
             <RouterLink
               :to="{
                 name: 'working-time',
-                params: {
-                  userId: route.params.userId,
-                  workingTimeId: workingTime.id
-                }
+                params: { userId, workingTimeId: workingTime.id }
               }"
-              :class="buttonVariants({ size: 'iconXs', variant: 'none' })"
+              :class="buttonVariants({ size: 'iconXs', variant: 'secondary' })"
             >
               <Eye class="size-5" />
             </RouterLink>
@@ -95,5 +110,5 @@ onMounted(() => {
         </TableRow>
       </TableBody>
     </Table>
-  </div>
+  </template>
 </template>

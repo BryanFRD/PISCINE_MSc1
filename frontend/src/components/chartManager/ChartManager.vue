@@ -1,25 +1,20 @@
 <script setup>
-import { ref } from 'vue'
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 
-import ChartBar from './ChartBar.vue'
-import ChartDonut from './chartDonut.vue'
-import ChartLine from './ChartLine.vue'
+import MonthWorkChart from './MonthWorkChart.vue'
+import TodayWorkChart from './TodayWorkChart.vue'
+import WeekWorkChart from './WeekWorkChart.vue'
 
-const barError = ref(false)
-const donutError = ref(false)
-const lineError = ref(false)
+const route = useRoute()
+
+const userId = computed(() => route.params.userId)
 </script>
 
 <template>
-  <div class="rounded-md bg-zinc-100 p-4 shadow">
-    <div v-if="!barError & !donutError & !lineError" class="tqt">
-      <ChartBar @error="barError = true" />
-      <ChartDonut @error="donutError = true" />
-      <ChartLine @error="lineError = true" />
-    </div>
-
-    <div v-else>
-      <h1>Erreur</h1>
-    </div>
+  <div class="space-y-16">
+    <TodayWorkChart :user-id="parseInt(userId)" />
+    <WeekWorkChart :user-id="parseInt(userId)" />
+    <MonthWorkChart :user-id="parseInt(userId)" />
   </div>
 </template>

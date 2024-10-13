@@ -1,11 +1,13 @@
 <script setup>
 import { format } from 'date-fns'
-import { Edit3, Loader2, Plus, Trash2 } from 'lucide-vue-next'
-import { onMounted, ref, watch } from 'vue'
+import { Edit3, Plus, Trash2 } from 'lucide-vue-next'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 import { instance } from '@/api/instance'
 import { Button, buttonVariants } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
   TableBody,
@@ -20,6 +22,9 @@ import EditWorkingTimeDialog from './EditWorkingTimeDialog.vue'
 
 const route = useRoute()
 
+const userId = computed(() => route.params.userId)
+const workingTimeId = computed(() => route.params.workingTimeId)
+
 const workingTime = ref({
   id: null,
   start: null,
@@ -31,13 +36,13 @@ const workingTimeError = ref(null)
 
 const workingTimeInitialized = ref(false)
 
-const getWorkingTime = async (userId, workingTimeId) => {
+const getWorkingTime = async () => {
   workingTimeLoading.value = true
   workingTimeError.value = null
 
   try {
     const result = await instance.get(
-      `/workingtimes/${userId}/${workingTimeId}`
+      `/workingtimes/${userId.value}/${workingTimeId.value}`
     )
 
     workingTime.value = result.data
@@ -49,92 +54,79 @@ const getWorkingTime = async (userId, workingTimeId) => {
 }
 
 watch(
-  () => [route.params.userId, route.params.workingTimeId],
-  values => {
-    getWorkingTime(values[0], values[1])
-  }
+  () => [userId.value, workingTimeId.value],
+  () => getWorkingTime()
 )
-onMounted(() => {
-  getWorkingTime(route.params.userId, route.params.workingTimeId)
-})
+onMounted(() => getWorkingTime())
 </script>
 
 <template>
-  <div class="rounded-md bg-zinc-100 p-4 shadow">
-    <div
-      v-if="workingTimeLoading && !workingTimeInitialized"
-      class="flex items-center gap-x-2"
-    >
-      <Loader2 class="size-4 animate-spin" />
-      <span>Loading...</span>
-    </div>
-
-    <div v-else-if="workingTimeError">
-      {{ workingTimeError }}
-    </div>
-
-    <div v-else>
-      <h2 class="mb-2 text-xl font-semibold">Working Time Manager</h2>
-
-      <Table class="mb-4">
-        <TableHeader>
-          <TableRow>
-            <TableHead class="text-center">Start</TableHead>
-            <TableHead class="text-center">End</TableHead>
-          </TableRow>
-        </TableHeader>
-
-        <TableBody>
-          <TableRow>
-            <TableCell class="text-center">
-              {{
-                format(
-                  new Date(workingTime.start),
-                  'MMMM dd, yyyy hh:mm:ss aaa'
-                )
-              }}
-            </TableCell>
-            <TableCell class="text-center">
-              {{
-                format(new Date(workingTime.end), 'MMMM dd, yyyy hh:mm:ss aaa')
-              }}
-            </TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
-
-      <div class="flex items-center gap-x-2">
-        <RouterLink
-          :to="{
-            name: 'working-time-create',
-            params: { userId: route.params.id }
-          }"
-          :class="buttonVariants({ size: 'xs' })"
-        >
-          <Plus class="size-4" />
-          <span>Create a working time</span>
-        </RouterLink>
-
-        <EditWorkingTimeDialog
-          :working-time="workingTime"
-          :on-success="
-            () =>
-              getWorkingTime(route.params.userId, route.params.workingTimeId)
-          "
-        >
-          <Button size="xs">
-            <Edit3 class="size-4" />
-            <span>Edit</span>
-          </Button>
-        </EditWorkingTimeDialog>
-
-        <DeleteWorkingTimeDialog>
-          <Button size="xs" variant="destructive">
-            <Trash2 class="size-4" />
-            <span>Delete</span>
-          </Button>
-        </DeleteWorkingTimeDialog>
-      </div>
-    </div>
+  <div v-if="workingTimeLoading && !workingTimeInitialized" class="space-y-4">
+    <Skeleton class="h-10 w-1/2" />
+    <Skeleton class="h-32 w-full" />
   </div>
+
+  <div v-else-if="workingTimeError">
+    {{ workingTimeError }}
+  </div>
+
+  <template v-else>
+    <h1 class="mb-4 text-3xl font-bold">Working Time Manager</h1>
+
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead class="text-center">Start</TableHead>
+          <TableHead class="text-center">End</TableHead>
+        </TableRow>
+      </TableHeader>
+
+      <TableBody>
+        <TableRow>
+          <TableCell class="text-center">
+            {{
+              format(new Date(workingTime.start), 'MMMM dd, yyyy hh:mm:ss aa')
+            }}
+          </TableCell>
+          <TableCell class="text-center">
+            {{ format(new Date(workingTime.end), 'MMMM dd, yyyy hh:mm:ss aa') }}
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+
+    <Separator class="mb-4 mt-8" />
+
+    <h3 class="mb-4 text-2xl font-semibold">Actions</h3>
+
+    <div class="flex items-center gap-x-2">
+      <RouterLink
+        :to="{
+          name: 'working-time-create',
+          params: { userId }
+        }"
+        :class="buttonVariants()"
+      >
+        <Plus class="size-4" />
+        <span>Create a working time</span>
+      </RouterLink>
+
+      <EditWorkingTimeDialog
+        :working-time="workingTime"
+        :on-success="() => getWorkingTime()"
+      >
+        <Button>
+          <Edit3 class="size-4" />
+          <span>Edit</span>
+        </Button>
+      </EditWorkingTimeDialog>
+
+      <DeleteWorkingTimeDialog>
+        <Button variant="destructive">
+          <Trash2 class="size-4" />
+          <span>Delete</span>
+        </Button>
+      </DeleteWorkingTimeDialog>
+    </div>
+  </template>
 </template>

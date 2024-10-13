@@ -5,7 +5,6 @@ import { format } from 'date-fns'
 import { Edit3, Loader2 } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import { ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
 import { toast } from 'vue-sonner'
 import { z } from 'zod'
 
@@ -21,8 +20,6 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
-
-const route = useRoute()
 
 const isOpen = ref(false)
 const isLoading = ref(false)
@@ -64,7 +61,7 @@ const onSubmit = async values => {
       end: end.toISOString()
     }
 
-    await instance.put(`/workingtimes/${route.params.workingTimeId}`, body)
+    await instance.put(`/workingtimes/${props.workingTime.id}`, body)
 
     props.onSuccess()
     isOpen.value = false

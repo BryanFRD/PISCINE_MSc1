@@ -12,7 +12,7 @@ const props = defineProps({
   colors: { type: Array, required: false },
   index: { type: null, required: true },
   margin: {
-    type: Object,
+    type: null,
     required: false,
     default: () => ({ top: 0, bottom: 0, left: 0, right: 0 })
   },

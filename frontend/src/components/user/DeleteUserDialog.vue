@@ -1,7 +1,7 @@
 <script setup>
 import { Loader2 } from 'lucide-vue-next'
 import { ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { toast } from 'vue-sonner'
 
 import { instance } from '@/api/instance'
@@ -17,7 +17,14 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 
-const route = useRoute()
+const props = defineProps({
+  userId: {
+    type: Number,
+    required: true
+  }
+})
+
+const router = useRouter()
 
 const isOpen = ref(false)
 const isLoading = ref(false)
@@ -26,7 +33,9 @@ const submit = async () => {
   isLoading.value = true
 
   try {
-    await instance.delete(`/users/${route.params.userId}`)
+    await instance.delete(`/users/${props.userId}`)
+
+    router.push({ name: 'home' })
 
     isOpen.value = false
   } catch {

@@ -1,6 +1,11 @@
 <script setup>
-import { Axis, CurveType, Line } from '@unovis/ts'
-import { VisAxis, VisLine, VisXYContainer } from '@unovis/vue'
+import { Axis, GroupedBar, StackedBar } from '@unovis/ts'
+import {
+  VisAxis,
+  VisGroupedBar,
+  VisStackedBar,
+  VisXYContainer
+} from '@unovis/vue'
 import { useMounted } from '@vueuse/core'
 import { computed, ref } from 'vue'
 
@@ -30,16 +35,15 @@ const props = defineProps({
   showLegend: { type: Boolean, required: false, default: true },
   showGridLine: { type: Boolean, required: false, default: true },
   customTooltip: { type: null, required: false },
-  curveType: { type: String, required: false, default: CurveType.MonotoneX }
+  type: { type: String, required: false, default: 'grouped' },
+  roundedCorners: { type: Number, required: false, default: 0 }
 })
-
 const emits = defineEmits(['legendItemClick'])
 
 const index = computed(() => props.index)
 const colors = computed(() =>
   props.colors?.length ? props.colors : defaultColors(props.categories.length)
 )
-
 const legendItems = ref(
   props.categories.map((category, i) => ({
     name: category,
@@ -53,6 +57,13 @@ const isMounted = useMounted()
 function handleLegendItemClick(d, i) {
   emits('legendItemClick', d, i)
 }
+
+const VisBarComponent = computed(() =>
+  props.type === 'grouped' ? VisGroupedBar : VisStackedBar
+)
+const selectorsBar = computed(() =>
+  props.type === 'grouped' ? GroupedBar.selectors.bar : StackedBar.selectors.bar
+)
 </script>
 
 <template>
@@ -66,34 +77,33 @@ function handleLegendItemClick(d, i) {
     />
 
     <VisXYContainer
-      :margin="{ left: 20, right: 20 }"
       :data="data"
       :style="{ height: isMounted ? '100%' : 'auto' }"
+      :margin="margin"
     >
       <ChartCrosshair
         v-if="showTooltip"
         :colors="colors"
         :items="legendItems"
-        :index="index"
         :custom-tooltip="customTooltip"
+        :index="index"
       />
 
-      <template v-for="(category, i) in categories" :key="category">
-        <VisLine
-          :x="(d, i) => i"
-          :y="d => d[category]"
-          :curve-type="curveType"
-          :color="colors[i]"
-          :attributes="{
-            [Line.selectors.line]: {
-              opacity: legendItems.find(item => item.name === category)
-                ?.inactive
-                ? filterOpacity
-                : 1
+      <VisBarComponent
+        :x="(d, i) => i"
+        :y="categories.map(category => d => d[category])"
+        :color="colors"
+        :rounded-corners="roundedCorners"
+        :bar-padding="0.05"
+        :attributes="{
+          [selectorsBar]: {
+            opacity: (d, i) => {
+              const pos = i % categories.length
+              return legendItems[pos]?.inactive ? filterOpacity : 1
             }
-          }"
-        />
-      </template>
+          }
+        }"
+      />
 
       <VisAxis
         v-if="showXAxis"
