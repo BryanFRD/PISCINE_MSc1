@@ -32,9 +32,6 @@ if config_env() == :prod do
 
   config PlugCors, origins: System.get_env("CORS_ORIGINS")
 
-  require Logger
-  Logger.info("CORS origins: #{System.get_env("CORS_ORIGINS")}")
-
   config :time_manager, TimeManager.Repo,
     ssl: false,
     url: database_url,
