@@ -19,7 +19,11 @@ jobs:
 
     services:
       db:
-        image: postgres:13
+        image: postgres:latest
+        env:
+          POSTGRES_PASSWORD: postgres_password
+          POSTGRES_USER: postgres_user
+          POSTGRES_DB: time_manager_dev
         ports:
           - 5432:5432
         options: >-
