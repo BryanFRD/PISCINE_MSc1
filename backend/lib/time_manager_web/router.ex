@@ -17,6 +17,7 @@ defmodule TimeManagerWeb.Router do
 
     # Workingtimes
     get "/workingtimes/:user_id", WorkingtimeController, :index
+    get "/workingtimes/:user_id/paginate", WorkingtimeController, :paginate
     get "/workingtimes/:user_id/:id", WorkingtimeController, :show
     post "/workingtimes/:user_id", WorkingtimeController, :create
     put "/workingtimes/:id", WorkingtimeController, :update

@@ -1,0 +1,29 @@
+<script setup>
+import { RangeCalendarGridRow, useForwardProps } from 'radix-vue'
+import { computed } from 'vue'
+
+import { cn } from '@/lib/utils'
+
+const props = defineProps({
+  asChild: { type: Boolean, required: false },
+  as: { type: null, required: false },
+  class: { type: null, required: false }
+})
+
+const delegatedProps = computed(() => {
+  const { class: _, ...delegated } = props
+
+  return delegated
+})
+
+const forwardedProps = useForwardProps(delegatedProps)
+</script>
+
+<template>
+  <RangeCalendarGridRow
+    :class="cn('mt-2 flex w-full', props.class)"
+    v-bind="forwardedProps"
+  >
+    <slot />
+  </RangeCalendarGridRow>
+</template>

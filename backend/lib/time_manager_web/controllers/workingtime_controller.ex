@@ -83,6 +83,34 @@ defmodule TimeManagerWeb.WorkingtimeController do
     response(404, "User not found")
   end
 
+  def paginate(conn, %{"user_id" => user_id} = params) do
+    workingtimes = Workingtimes.paginate_user_workingtimes(user_id, params)
+    render(conn, :paginate, workingtimes: workingtimes)
+  end
+
+  swagger_path :paginate do
+    get("/workingtimes/{user_id}/paginate")
+    description("Paginate user workingtimes")
+
+    parameters do
+      user_id(:path, :string, "Unique identifier for the user", required: true)
+
+      page(:query, :integer, "Page number", required: false)
+      per_page(:query, :integer, "Number of items per page", required: false)
+      start(:query, :datetime, "The start time of the working time", required: false)
+
+      end_time(:query, :datetime, "The end time of the working time (field: 'end')",
+        required: false
+      )
+
+      order_by(:query, :string, "Order by start or end time", required: false)
+      order(:query, :string, "Order direction", required: false)
+    end
+
+    response(200, "List of user workingtimes", Schema.ref(:Workingtimes))
+    response(404, "User not found")
+  end
+
   def create(conn, workingtime_params) do
     Users.get_user!(workingtime_params["user_id"])
 

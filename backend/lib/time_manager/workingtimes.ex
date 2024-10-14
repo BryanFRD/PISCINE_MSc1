@@ -31,6 +31,36 @@ defmodule TimeManager.Workingtimes do
     Repo.all(query)
   end
 
+  def paginate_user_workingtimes(user_id, params \\ %{}) do
+    user = Users.get_user!(user_id)
+
+    page = Map.get(params, "page", "1") |> String.to_integer()
+    per_page = Map.get(params, "per_page", "10") |> String.to_integer()
+    offset = (page - 1) * per_page
+
+    query =
+      Workingtime
+      |> where([w], w.user_id == ^user.id)
+      |> maybe_filter_by_start(params["start"])
+      |> maybe_filter_by_end(params["end"])
+      |> maybe_order_by(params["order_by"], params["order"])
+      |> limit(^per_page)
+      |> offset(^offset)
+
+    data = Repo.all(query)
+
+    total = Repo.aggregate(Workingtime, :count, :id, where: [user_id: user.id])
+
+    %{
+      data: data,
+      meta: %{
+        total: total,
+        page: page,
+        per_page: per_page
+      }
+    }
+  end
+
   # Filter by start
   defp maybe_filter_by_start(query, nil), do: query
 
