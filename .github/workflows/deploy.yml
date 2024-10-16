@@ -2,7 +2,7 @@ name: Deploy to Google Cloud
 
 on:
   workflow_run:
-    workflows: ["CI/CD Workflow"]
+    workflows: ["CI/CD Pipeline"]
     types:
       - completed
 
