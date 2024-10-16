@@ -11,8 +11,8 @@ defmodule TimeManager.WorkingtimesFixtures do
     {:ok, workingtime} =
       attrs
       |> Enum.into(%{
-        end: ~N[2024-10-07 09:40:00],
-        start: ~N[2024-10-07 09:40:00],
+        start: ~N[2024-10-07 09:00:00],
+        end: ~N[2024-10-07 18:00:00],
         user_id: attrs[:user_id] || 1
       })
       |> TimeManager.Workingtimes.create_workingtime()
