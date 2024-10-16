@@ -1,6 +1,5 @@
 {
   "swagger": "2.0",
-  "basePath": "/api",
   "paths": {
     "/workingtimes/{user_id}/{id}": {
       "get": {
@@ -37,6 +36,78 @@
         ],
         "operationId": "TimeManagerWeb.WorkingtimeController.show",
         "description": "Show a single workingtime"
+      }
+    },
+    "/workingtimes/{user_id}/paginate": {
+      "get": {
+        "tags": [
+          "Workingtime"
+        ],
+        "summary": "",
+        "responses": {
+          "404": {
+            "description": "User not found"
+          },
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/Workingtimes"
+            },
+            "description": "List of user workingtimes"
+          }
+        },
+        "parameters": [
+          {
+            "type": "string",
+            "required": true,
+            "name": "user_id",
+            "in": "path",
+            "description": "Unique identifier for the user"
+          },
+          {
+            "type": "integer",
+            "required": false,
+            "name": "page",
+            "in": "query",
+            "description": "Page number"
+          },
+          {
+            "type": "integer",
+            "required": false,
+            "name": "per_page",
+            "in": "query",
+            "description": "Number of items per page"
+          },
+          {
+            "type": "datetime",
+            "required": false,
+            "name": "start",
+            "in": "query",
+            "description": "The start time of the working time"
+          },
+          {
+            "type": "datetime",
+            "required": false,
+            "name": "end_time",
+            "in": "query",
+            "description": "The end time of the working time (field: 'end')"
+          },
+          {
+            "type": "string",
+            "required": false,
+            "name": "order_by",
+            "in": "query",
+            "description": "Order by start or end time"
+          },
+          {
+            "type": "string",
+            "required": false,
+            "name": "order",
+            "in": "query",
+            "description": "Order direction"
+          }
+        ],
+        "operationId": "TimeManagerWeb.WorkingtimeController.paginate",
+        "description": "Paginate user workingtimes"
       }
     },
     "/workingtimes/{user_id}": {
@@ -421,30 +492,8 @@
       }
     }
   },
+  "basePath": "/api",
   "definitions": {
-    "WorkingtimeAttributes": {
-      "type": "object",
-      "title": "WorkingtimeAttributes",
-      "required": [
-        "end_time",
-        "start"
-      ],
-      "properties": {
-        "start": {
-          "type": "datetime",
-          "description": "The start time of the working time"
-        },
-        "end_time": {
-          "type": "datetime",
-          "description": "The end time of the working time"
-        }
-      },
-      "example": {
-        "start": "2024-10-08 08:00:00",
-        "end": "2024-10-08 17:00:00"
-      },
-      "description": "Attributes for creating or updating a workingtime"
-    },
     "UserAttributes": {
       "type": "object",
       "title": "UserAttributes",
@@ -468,6 +517,44 @@
       },
       "description": "Attributes for creating or updating a user"
     },
+    "Clock": {
+      "type": "object",
+      "title": "Clock",
+      "required": [
+        "user",
+        "status",
+        "id"
+      ],
+      "properties": {
+        "user": {
+          "type": "User",
+          "description": "The user creating this clock"
+        },
+        "time": {
+          "type": "datetime",
+          "description": "Time of day"
+        },
+        "status": {
+          "type": "boolean",
+          "description": "Indicates whether the clock is in or out"
+        },
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the clock"
+        }
+      },
+      "example": {
+        "user": {
+          "username": "john_doe",
+          "id": 1,
+          "email": "john.doe@email.com"
+        },
+        "time": "2024-10-08 12:00:00",
+        "status": true,
+        "id": 1
+      },
+      "description": "Timestamp of clock in or out for a user"
+    },
     "ClockAttributes": {
       "type": "object",
       "title": "ClockAttributes",
@@ -490,6 +577,58 @@
         "status": true
       },
       "description": "Attributes for creating a clock"
+    },
+    "WorkingtimeAttributes": {
+      "type": "object",
+      "title": "WorkingtimeAttributes",
+      "required": [
+        "end_time",
+        "start"
+      ],
+      "properties": {
+        "start": {
+          "type": "datetime",
+          "description": "The start time of the working time"
+        },
+        "end_time": {
+          "type": "datetime",
+          "description": "The end time of the working time"
+        }
+      },
+      "example": {
+        "start": "2024-10-08 08:00:00",
+        "end": "2024-10-08 17:00:00"
+      },
+      "description": "Attributes for creating or updating a workingtime"
+    },
+    "User": {
+      "type": "object",
+      "title": "User",
+      "required": [
+        "username",
+        "email",
+        "id"
+      ],
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "The user's username"
+        },
+        "id": {
+          "type": "number",
+          "description": "Unique identifier for the user"
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's email address"
+        }
+      },
+      "example": {
+        "username": "Joe",
+        "id": 1,
+        "email": "joe@mail.com"
+      },
+      "description": "A user of the application"
     },
     "Workingtime": {
       "type": "object",
@@ -530,43 +669,6 @@
       },
       "description": "A user's working time"
     },
-    "Workingtimes": {
-      "type": "array",
-      "title": "Workingtimes",
-      "items": {
-        "$ref": "#/definitions/Workingtime"
-      },
-      "description": "A collection of Workingtimes"
-    },
-    "User": {
-      "type": "object",
-      "title": "User",
-      "required": [
-        "username",
-        "email",
-        "id"
-      ],
-      "properties": {
-        "username": {
-          "type": "string",
-          "description": "The user's username"
-        },
-        "id": {
-          "type": "number",
-          "description": "Unique identifier for the user"
-        },
-        "email": {
-          "type": "string",
-          "description": "The user's email address"
-        }
-      },
-      "example": {
-        "username": "Joe",
-        "id": 1,
-        "email": "joe@mail.com"
-      },
-      "description": "A user of the application"
-    },
     "Users": {
       "type": "array",
       "title": "Users",
@@ -575,43 +677,13 @@
       },
       "description": "A collection of Users"
     },
-    "Clock": {
-      "type": "object",
-      "title": "Clock",
-      "required": [
-        "user",
-        "status",
-        "id"
-      ],
-      "properties": {
-        "user": {
-          "type": "User",
-          "description": "The user creating this clock"
-        },
-        "time": {
-          "type": "datetime",
-          "description": "Time of day"
-        },
-        "status": {
-          "type": "boolean",
-          "description": "Indicates whether the clock is in or out"
-        },
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the clock"
-        }
+    "Workingtimes": {
+      "type": "array",
+      "title": "Workingtimes",
+      "items": {
+        "$ref": "#/definitions/Workingtime"
       },
-      "example": {
-        "user": {
-          "username": "john_doe",
-          "id": 1,
-          "email": "john.doe@email.com"
-        },
-        "time": "2024-10-08 12:00:00",
-        "status": true,
-        "id": 1
-      },
-      "description": "Timestamp of clock in or out for a user"
+      "description": "A collection of Workingtimes"
     }
   },
   "host": "localhost:4000",

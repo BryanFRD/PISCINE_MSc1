@@ -8,6 +8,7 @@ export default [
     rules: {
       'vue/multi-word-component-names': 'off',
       'vue/require-default-prop': 'off',
+      'vue/one-component-per-file': 'off',
       'prettier/prettier': ['warn', { endOfLine: 'auto' }]
     }
   }

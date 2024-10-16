@@ -28,14 +28,14 @@ defmodule TimeManager.WorkingtimesTest do
 
     test "create_workingtime/1 with valid data creates a workingtime", %{user: user} do
       valid_attrs = %{
-        start: ~N[2024-10-07 09:40:00],
-        end: ~N[2024-10-07 09:40:00],
+        start: ~N[2024-10-07 09:00:00],
+        end: ~N[2024-10-07 18:00:00],
         user_id: user.id
       }
 
       assert {:ok, %Workingtime{} = workingtime} = Workingtimes.create_workingtime(valid_attrs)
-      assert workingtime.start == ~N[2024-10-07 09:40:00]
-      assert workingtime.end == ~N[2024-10-07 09:40:00]
+      assert workingtime.start == ~N[2024-10-07 09:00:00]
+      assert workingtime.end == ~N[2024-10-07 18:00:00]
       assert workingtime.user_id == user.id
     end
 
@@ -45,13 +45,13 @@ defmodule TimeManager.WorkingtimesTest do
 
     test "update_workingtime/2 with valid data updates the workingtime", %{user: user} do
       workingtime = workingtime_fixture(%{user_id: user.id})
-      update_attrs = %{start: ~N[2024-10-08 09:40:00], end: ~N[2024-10-08 09:40:00]}
+      update_attrs = %{start: ~N[2024-10-08 09:00:00], end: ~N[2024-10-08 18:00:00]}
 
       assert {:ok, %Workingtime{} = workingtime} =
                Workingtimes.update_workingtime(workingtime, update_attrs)
 
-      assert workingtime.start == ~N[2024-10-08 09:40:00]
-      assert workingtime.end == ~N[2024-10-08 09:40:00]
+      assert workingtime.start == ~N[2024-10-08 09:00:00]
+      assert workingtime.end == ~N[2024-10-08 18:00:00]
       assert workingtime.user_id == user.id
     end
 

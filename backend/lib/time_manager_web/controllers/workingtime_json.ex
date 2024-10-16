@@ -10,6 +10,18 @@ defmodule TimeManagerWeb.WorkingtimeJSON do
   end
 
   @doc """
+  Renders a list of workingtimes.
+  """
+  def paginate(%{workingtimes: workingtimes}) do
+    data = for(workingtime <- workingtimes.data, do: data(workingtime))
+
+    %{
+      data: data,
+      meta: workingtimes.meta
+    }
+  end
+
+  @doc """
   Renders a single workingtime.
   """
   def show(%{workingtime: workingtime}) do

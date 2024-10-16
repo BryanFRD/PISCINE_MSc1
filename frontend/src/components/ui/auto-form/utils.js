@@ -1,12 +1,8 @@
-// TODO: This should support recursive ZodEffects but TypeScript doesn't allow circular type definitions.
-
 /**
  * Beautify a camelCase string.
  * e.g. "myString" -> "My String"
  */
 export function beautifyObjectName(string) {
-  // Remove bracketed indices
-  // if numbers only return the string
   let output = string.replace(/\[\d+\]/g, '').replace(/([A-Z])/g, ' $1')
   output = output.charAt(0).toUpperCase() + output.slice(1)
   return output
@@ -19,9 +15,7 @@ export function beautifyObjectName(string) {
  */
 export function getIndexIfArray(string) {
   const indexRegex = /\[(\d+)\]/
-  // Match the index
   const match = string.match(indexRegex)
-  // Extract the index (number)
   const index = match ? Number.parseInt(match[1]) : undefined
   return index
 }
