@@ -563,81 +563,6 @@
       },
       "description": "Attributes for creating a clock"
     },
-    "Clock": {
-      "type": "object",
-      "title": "Clock",
-      "required": [
-        "user",
-        "status",
-        "id"
-      ],
-      "properties": {
-        "user": {
-          "type": "User",
-          "description": "The user creating this clock"
-        },
-        "time": {
-          "type": "datetime",
-          "description": "Time of day"
-        },
-        "status": {
-          "type": "boolean",
-          "description": "Indicates whether the clock is in or out"
-        },
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the clock"
-        }
-      },
-      "example": {
-        "user": {
-          "username": "john_doe",
-          "id": 1,
-          "email": "john.doe@email.com"
-        },
-        "time": "2024-10-08 12:00:00",
-        "status": true,
-        "id": 1
-      },
-      "description": "Timestamp of clock in or out for a user"
-    },
-    "User": {
-      "type": "object",
-      "title": "User",
-      "required": [
-        "username",
-        "email",
-        "id"
-      ],
-      "properties": {
-        "username": {
-          "type": "string",
-          "description": "The user's username"
-        },
-        "id": {
-          "type": "number",
-          "description": "Unique identifier for the user"
-        },
-        "email": {
-          "type": "string",
-          "description": "The user's email address"
-        }
-      },
-      "example": {
-        "username": "Joe",
-        "id": 1,
-        "email": "joe@mail.com"
-      },
-      "description": "A user of the application"
-    },
-    "Users": {
-      "type": "array",
-      "title": "Users",
-      "items": {
-        "$ref": "#/definitions/User"
-      },
-      "description": "A collection of Users"
-    },
     "Workingtime": {
       "type": "object",
       "title": "Workingtime",
@@ -684,6 +609,81 @@
         "$ref": "#/definitions/Workingtime"
       },
       "description": "A collection of Workingtimes"
+    },
+    "User": {
+      "type": "object",
+      "title": "User",
+      "required": [
+        "username",
+        "email",
+        "id"
+      ],
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "The user's username"
+        },
+        "id": {
+          "type": "number",
+          "description": "Unique identifier for the user"
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's email address"
+        }
+      },
+      "example": {
+        "username": "Joe",
+        "id": 1,
+        "email": "joe@mail.com"
+      },
+      "description": "A user of the application"
+    },
+    "Clock": {
+      "type": "object",
+      "title": "Clock",
+      "required": [
+        "user",
+        "status",
+        "id"
+      ],
+      "properties": {
+        "user": {
+          "type": "User",
+          "description": "The user creating this clock"
+        },
+        "time": {
+          "type": "datetime",
+          "description": "Time of day"
+        },
+        "status": {
+          "type": "boolean",
+          "description": "Indicates whether the clock is in or out"
+        },
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the clock"
+        }
+      },
+      "example": {
+        "user": {
+          "username": "john_doe",
+          "id": 1,
+          "email": "john.doe@email.com"
+        },
+        "time": "2024-10-08 12:00:00",
+        "status": true,
+        "id": 1
+      },
+      "description": "Timestamp of clock in or out for a user"
+    },
+    "Users": {
+      "type": "array",
+      "title": "Users",
+      "items": {
+        "$ref": "#/definitions/User"
+      },
+      "description": "A collection of Users"
     }
   },
   "host": "localhost:4000",

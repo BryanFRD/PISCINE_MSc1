@@ -5,11 +5,25 @@ defmodule TimeManagerWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :auth do
+    plug TimeManager.Users.Pipeline
+  end
+
   scope "/api", TimeManagerWeb do
     pipe_through :api
 
+    post "/auth/register", AuthController, :register
+    post "/auth/login", AuthController, :login
+  end
+
+  scope "/api", TimeManagerWeb do
+    pipe_through [:api, :auth]
+
     # Users
     resources "/users", UserController, except: [:new, :edit]
+
+    # Auth
+    get "/auth/profile", AuthController, :profile
 
     # Clocks
     get "/clocks/:user_id", ClockController, :show

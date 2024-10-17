@@ -14,6 +14,13 @@ defmodule TimeManagerWeb.FallbackController do
     |> render(:error, changeset: changeset)
   end
 
+  # This clause handles errors returned by Guardian when a user is not authenticated.
+  def call(conn, {:error, :unauthorized}) do
+    conn
+    |> put_status(:unauthorized)
+    |> json(%{error: "Unauthorized"})
+  end
+
   # This clause is an example of how to handle resources that cannot be found.
   def call(conn, {:error, :not_found}) do
     conn

@@ -4,6 +4,7 @@ defmodule TimeManager.Users do
   """
 
   import Ecto.Query, warn: false
+  alias TimeManager.Users.Guardian
   alias TimeManager.Repo
 
   alias TimeManager.Users.User
@@ -54,6 +55,8 @@ defmodule TimeManager.Users do
 
   """
   def get_user!(id), do: Repo.get!(User, id)
+
+  def get_user(id), do: Repo.get(User, id)
 
   @doc """
   Creates a user.
@@ -119,5 +122,28 @@ defmodule TimeManager.Users do
   """
   def change_user(%User{} = user, attrs \\ %{}) do
     User.changeset(user, attrs)
+  end
+
+  def generate_token(user) do
+    {:ok, token, _claims} = Guardian.encode_and_sign(user)
+    {:ok, token}
+  end
+
+  def authenticate_user(email, password) do
+    user = Repo.one(from(u in User, where: u.email == ^email))
+
+    case user do
+      nil ->
+        Bcrypt.no_user_verify()
+        {:error, :unauthorized}
+
+      user ->
+        if Bcrypt.verify_pass(password, user.hashed_password) do
+          {:ok, token} = generate_token(user)
+          {:ok, %{user: user, token: token}}
+        else
+          {:error, :unauthorized}
+        end
+    end
   end
 end

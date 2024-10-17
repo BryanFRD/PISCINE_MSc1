@@ -1,5 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+import Login from './components/auth/Login.vue'
+import Public from './components/auth/Public.vue'
+import Register from './components/auth/Register.vue'
 import ChartManager from './components/chartManager/ChartManager.vue'
 import ClockManager from './components/clocks/ClockManager.vue'
 import Home from './components/home/Home.vue'
@@ -17,7 +20,7 @@ const router = createRouter({
       component: Layout,
       children: [
         { path: '/', name: 'home', component: Home },
-        { path: '/account/:userId', name: 'account', component: Account },
+        { path: '/account', name: 'account', component: Account },
         { path: '/clock/:userId', name: 'clock', component: ClockManager },
         {
           path: '/working-times/:userId',
@@ -39,6 +42,14 @@ const router = createRouter({
           name: 'chart-manager',
           component: ChartManager
         }
+      ]
+    },
+    {
+      path: '/',
+      component: Public,
+      children: [
+        { path: '/login', name: 'login', component: Login },
+        { path: '/register', name: 'register', component: Register }
       ]
     }
   ]
