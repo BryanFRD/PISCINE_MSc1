@@ -5,6 +5,9 @@ on:
     workflows: ["CI/CD Pipeline"]
     types:
       - completed
+  push:
+    branches:
+      - feature/*
 
 jobs:
   build:
