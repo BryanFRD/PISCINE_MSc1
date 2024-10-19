@@ -26,7 +26,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
         
-      - name: Build and push Docker image for backend and frontend
+      - name: Build and push Docker image
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/backend_piscine:latest ./backend
           docker push ${{ secrets.DOCKER_USERNAME }}/backend_piscine:latest
