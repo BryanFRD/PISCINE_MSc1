@@ -29,7 +29,7 @@ services:
       - MIX_ENV=prod
       - CORS_ORIGINS=http://localhost:5178
     depends_on:
-      - db
+      - sonarqube
   
   frontend:
     build: ./frontend
@@ -39,20 +39,20 @@ services:
     environment:
       - VITE_API_URL=http://localhost:4005/api
       
-  # sonarqube:
-  #   image: sonarqube:latest
-  #   ports:
-  #     - "9000:9000"
-  #   environment:
-  #     - SONAR_JDBC_URL=jdbc:postgresql://db:5432/sonar
-  #     - SONAR_JDBC_USERNAME=postgres_user
-  #     - SONAR_JDBC_PASSWORD=postgres_password
-  #   depends_on:
-  #     - db
-  #   volumes:
-  #     - sonarqube_data:/opt/sonarqube/data
-  #     - sonarqube_logs:/opt/sonarqube/logs
-  #     - sonarqube_extensions:/opt/sonarqube/extensions
+  sonarqube:
+    image: sonarqube:latest
+    ports:
+      - "9000:9000"
+    environment:
+      - SONAR_JDBC_URL=jdbc:postgresql://db:5432/sonar
+      - SONAR_JDBC_USERNAME=postgres_user
+      - SONAR_JDBC_PASSWORD=postgres_password
+    depends_on:
+      - db
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_logs:/opt/sonarqube/logs
+      - sonarqube_extensions:/opt/sonarqube/extensions
     
 volumes:
   db-data:
