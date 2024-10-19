@@ -44,12 +44,12 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            docker pull ${{ secrets.DOCKER_USERNAME }}/backend_piscine:latest
-            docker pull ${{ secrets.DOCKER_USERNAME }}/frontend_piscine:latest
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/backend_piscine:latest
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/frontend_piscine:latest
             
-            docker compose up -d
+            sudo docker compose up -d
             
-            docker compose --profile prod up -deploy
+            sudo docker compose --profile prod up -deploy
             
             docker ps
             echo "Deployment successful"
