@@ -21,7 +21,7 @@ services:
     build: ./backend
     restart: always
     ports:
-      - 4005:4000
+      - 4001:4000
     environment:
       - DATABASE_URL=ecto://postgres_user:postgres_password@db:5432/time_manager_dev
       - SECRET_KEY_BASE=UVEpCoG1NUs/A+Gylf6624lJnLb7G2ozGxX79VejR34KyOo+i3b1M0kT4HtOgonR
@@ -37,7 +37,7 @@ services:
     ports:
       - 5178:80
     environment:
-      - VITE_API_URL=http://localhost:4005/api
+      - VITE_API_URL=http://localhost:4001/api
       
   sonarqube:
     image: sonarqube:latest
