@@ -36,8 +36,10 @@ services:
     restart: always
     ports:
       - 5178:80
-    environment:
-      - VITE_API_URL=http://localhost:4001/api
+    volumes:
+      - ./frontend/.env:/usr/share/nginx/html/.env
+    env_file:
+      - ./frontend/.env
       
   sonarqube:
     image: sonarqube:latest
