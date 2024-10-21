@@ -1,9 +1,7 @@
 import axios from 'axios'
 
-const PORT = import.meta.env.PROD ? 4001 : 4000
-
 export const instance = axios.create({
-  baseURL: `http://localhost:${PORT}/api`,
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:4005/api',
   headers: {
     'Content-Type': 'application/json'
   }
