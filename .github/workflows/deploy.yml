@@ -1,13 +1,10 @@
 name: Deploy to Google Cloud
 
 on:
-  workflow_run:
-    workflows: ["CI/CD Pipeline"]
-    types:
-      - completed
   push:
     branches:
-      - feature/*
+      - master
+      - main
 
 jobs:
   build:
