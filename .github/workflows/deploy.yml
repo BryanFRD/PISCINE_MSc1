@@ -33,6 +33,7 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    if: github.repository == 'BryanFRD/PISCINE_MSc1'
     steps:
       - name: SSH into VM and pull Docker images
         uses: appleboy/ssh-action@master
