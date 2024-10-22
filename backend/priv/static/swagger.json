@@ -1,12 +1,11 @@
 {
   "basePath": "/api",
   "swagger": "2.0",
+  "basePath": "/api",
   "paths": {
     "/workingtimes/{user_id}/{id}": {
       "get": {
-        "tags": [
-          "Workingtime"
-        ],
+        "tags": ["Workingtime"],
         "summary": "",
         "responses": {
           "404": {
@@ -41,9 +40,7 @@
     },
     "/workingtimes/{user_id}/paginate": {
       "get": {
-        "tags": [
-          "Workingtime"
-        ],
+        "tags": ["Workingtime"],
         "summary": "",
         "responses": {
           "404": {
@@ -113,9 +110,7 @@
     },
     "/workingtimes/{user_id}": {
       "post": {
-        "tags": [
-          "Workingtime"
-        ],
+        "tags": ["Workingtime"],
         "summary": "",
         "responses": {
           "422": {
@@ -156,9 +151,7 @@
         "description": "Create a new workingtime for a user"
       },
       "get": {
-        "tags": [
-          "Workingtime"
-        ],
+        "tags": ["Workingtime"],
         "summary": "",
         "responses": {
           "404": {
@@ -214,9 +207,7 @@
     },
     "/workingtimes/{id}": {
       "put": {
-        "tags": [
-          "Workingtime"
-        ],
+        "tags": ["Workingtime"],
         "summary": "",
         "responses": {
           "422": {
@@ -257,9 +248,7 @@
         "description": "Update workingtime"
       },
       "delete": {
-        "tags": [
-          "Workingtime"
-        ],
+        "tags": ["Workingtime"],
         "summary": "",
         "responses": {
           "404": {
@@ -284,9 +273,7 @@
     },
     "/users/{id}": {
       "put": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "summary": "",
         "responses": {
           "422": {
@@ -327,9 +314,7 @@
         "description": "Update user"
       },
       "get": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "summary": "",
         "responses": {
           "404": {
@@ -355,9 +340,7 @@
         "description": "Show a single user"
       },
       "delete": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "summary": "",
         "responses": {
           "404": {
@@ -382,9 +365,7 @@
     },
     "/users": {
       "post": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "summary": "",
         "responses": {
           "422": {
@@ -415,9 +396,7 @@
         "description": "Create a new user"
       },
       "get": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "summary": "",
         "responses": {
           "200": {
@@ -449,9 +428,7 @@
     },
     "/clocks/{user_id}": {
       "put": {
-        "tags": [
-          "Clock"
-        ],
+        "tags": ["Clock"],
         "summary": "",
         "responses": {
           "422": {
@@ -494,13 +471,93 @@
     }
   },
   "definitions": {
-    "Workingtimes": {
-      "type": "array",
-      "title": "Workingtimes",
-      "items": {
-        "$ref": "#/definitions/Workingtime"
+    "UserAttributes": {
+      "type": "object",
+      "title": "UserAttributes",
+      "required": [
+        "username",
+        "email"
+      ],
+      "properties": {
+        "user": {
+          "type": "User",
+          "description": "The user creating this working time"
+        },
+        "start": {
+          "type": "datetime",
+          "description": "The start time of the working time"
+        },
+        "id": {
+          "type": "number",
+          "description": "Unique identifier for the user"
+        },
+        "end_time": {
+          "type": "datetime",
+          "description": "The end time of the working time (field: 'end')"
+        }
       },
-      "description": "A collection of Workingtimes"
+      "example": {
+        "username": "john_doe",
+        "email": "john.doe@email.com"
+      },
+      "description": "Attributes for creating or updating a user"
+    },
+    "Clock": {
+      "type": "object",
+      "title": "Clock",
+      "required": ["user", "status", "id"],
+      "properties": {
+        "user": {
+          "type": "User",
+          "description": "The user creating this clock"
+        },
+        "time": {
+          "type": "datetime",
+          "description": "Time of day"
+        },
+        "status": {
+          "type": "boolean",
+          "description": "Indicates whether the clock is in or out"
+        },
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the clock"
+        }
+      },
+      "example": {
+        "user": {
+          "username": "john_doe",
+          "id": 1,
+          "email": "john.doe@email.com"
+        },
+        "time": "2024-10-08 12:00:00",
+        "status": true,
+        "id": 1
+      },
+      "description": "Timestamp of clock in or out for a user"
+    },
+    "ClockAttributes": {
+      "type": "object",
+      "title": "ClockAttributes",
+      "required": [
+        "status",
+        "time"
+      ],
+      "properties": {
+        "time": {
+          "type": "datetime",
+          "description": "Timestamp for clock"
+        },
+        "status": {
+          "type": "boolean",
+          "description": "Clock in or out"
+        }
+      },
+      "example": {
+        "time": "2024-10-08 12:00:00",
+        "status": true
+      },
+      "description": "Attributes for creating a clock"
     },
     "WorkingtimeAttributes": {
       "type": "object",
@@ -524,6 +581,31 @@
         "end": "2024-10-08 17:00:00"
       },
       "description": "Attributes for creating or updating a workingtime"
+    },
+    "User": {
+      "type": "object",
+      "title": "User",
+      "required": ["username", "email", "id"],
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "The user's username"
+        },
+        "id": {
+          "type": "number",
+          "description": "Unique identifier for the user"
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's email address"
+        }
+      },
+      "example": {
+        "username": "Joe",
+        "id": 1,
+        "email": "joe@mail.com"
+      },
+      "description": "A user of the application"
     },
     "Workingtime": {
       "type": "object",
@@ -564,119 +646,6 @@
       },
       "description": "A user's working time"
     },
-    "ClockAttributes": {
-      "type": "object",
-      "title": "ClockAttributes",
-      "required": [
-        "status",
-        "time"
-      ],
-      "properties": {
-        "time": {
-          "type": "datetime",
-          "description": "Timestamp for clock"
-        },
-        "status": {
-          "type": "boolean",
-          "description": "Clock in or out"
-        }
-      },
-      "example": {
-        "time": "2024-10-08 12:00:00",
-        "status": true
-      },
-      "description": "Attributes for creating a clock"
-    },
-    "Clock": {
-      "type": "object",
-      "title": "Clock",
-      "required": [
-        "user",
-        "status",
-        "id"
-      ],
-      "properties": {
-        "user": {
-          "type": "User",
-          "description": "The user creating this clock"
-        },
-        "time": {
-          "type": "datetime",
-          "description": "Time of day"
-        },
-        "status": {
-          "type": "boolean",
-          "description": "Indicates whether the clock is in or out"
-        },
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the clock"
-        }
-      },
-      "example": {
-        "user": {
-          "username": "john_doe",
-          "id": 1,
-          "email": "john.doe@email.com"
-        },
-        "time": "2024-10-08 12:00:00",
-        "status": true,
-        "id": 1
-      },
-      "description": "Timestamp of clock in or out for a user"
-    },
-    "UserAttributes": {
-      "type": "object",
-      "title": "UserAttributes",
-      "required": [
-        "username",
-        "email"
-      ],
-      "properties": {
-        "username": {
-          "type": "string",
-          "description": "The user's username"
-        },
-        "email": {
-          "type": "string",
-          "description": "The user's email address"
-        }
-      },
-      "example": {
-        "username": "john_doe",
-        "email": "john.doe@email.com"
-      },
-      "description": "Attributes for creating or updating a user"
-    },
-    "User": {
-      "type": "object",
-      "title": "User",
-      "required": [
-        "username",
-        "email",
-        "id"
-      ],
-      "properties": {
-        "username": {
-          "type": "string",
-          "description": "The user's username"
-        },
-        "id": {
-          "type": "number",
-          "description": "Unique identifier for the user"
-        },
-        "email": {
-          "type": "string",
-          "description": "The user's email address"
-        }
-      },
-      "example": {
-        "username": "Joe",
-        "id": 1,
-        "email": "joe@mail.com"
-      },
-      "description": "A user of the application"
-    },
     "Users": {
       "type": "array",
       "title": "Users",
@@ -684,6 +653,14 @@
         "$ref": "#/definitions/User"
       },
       "description": "A collection of Users"
+    },
+    "Workingtimes": {
+      "type": "array",
+      "title": "Workingtimes",
+      "items": {
+        "$ref": "#/definitions/Workingtime"
+      },
+      "description": "A collection of Workingtimes"
     }
   },
   "host": "localhost:4000",
