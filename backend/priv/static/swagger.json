@@ -1,6 +1,5 @@
 {
   "swagger": "2.0",
-  "basePath": "/api",
   "paths": {
     "/workingtimes/{user_id}/{id}": {
       "get": {
@@ -493,30 +492,8 @@
       }
     }
   },
+  "basePath": "/api",
   "definitions": {
-    "WorkingtimeAttributes": {
-      "type": "object",
-      "title": "WorkingtimeAttributes",
-      "required": [
-        "end_time",
-        "start"
-      ],
-      "properties": {
-        "start": {
-          "type": "datetime",
-          "description": "The start time of the working time"
-        },
-        "end_time": {
-          "type": "datetime",
-          "description": "The end time of the working time"
-        }
-      },
-      "example": {
-        "start": "2024-10-08 08:00:00",
-        "end": "2024-10-08 17:00:00"
-      },
-      "description": "Attributes for creating or updating a workingtime"
-    },
     "UserAttributes": {
       "type": "object",
       "title": "UserAttributes",
@@ -564,6 +541,7 @@
       "description": "Attributes for creating a clock"
     },
     "Workingtime": {
+    "Clock": {
       "type": "object",
       "title": "Workingtime",
       "required": [
@@ -609,6 +587,52 @@
         "$ref": "#/definitions/Workingtime"
       },
       "description": "A collection of Workingtimes"
+    },
+    "ClockAttributes": {
+      "type": "object",
+      "title": "ClockAttributes",
+      "required": [
+        "status",
+        "time"
+      ],
+      "properties": {
+        "time": {
+          "type": "datetime",
+          "description": "Timestamp for clock"
+        },
+        "status": {
+          "type": "boolean",
+          "description": "Clock in or out"
+        }
+      },
+      "example": {
+        "time": "2024-10-08 12:00:00",
+        "status": true
+      },
+      "description": "Attributes for creating a clock"
+    },
+    "WorkingtimeAttributes": {
+      "type": "object",
+      "title": "WorkingtimeAttributes",
+      "required": [
+        "end_time",
+        "start"
+      ],
+      "properties": {
+        "start": {
+          "type": "datetime",
+          "description": "The start time of the working time"
+        },
+        "end_time": {
+          "type": "datetime",
+          "description": "The end time of the working time"
+        }
+      },
+      "example": {
+        "start": "2024-10-08 08:00:00",
+        "end": "2024-10-08 17:00:00"
+      },
+      "description": "Attributes for creating or updating a workingtime"
     },
     "User": {
       "type": "object",
@@ -678,6 +702,14 @@
       "description": "Timestamp of clock in or out for a user"
     },
     "Users": {
+      "type": "array",
+      "title": "Users",
+      "items": {
+        "$ref": "#/definitions/User"
+      },
+      "description": "A collection of Users"
+    },
+    "Workingtimes": {
       "type": "array",
       "title": "Users",
       "items": {

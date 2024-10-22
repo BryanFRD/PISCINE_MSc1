@@ -1,0 +1,68 @@
+name: CI/CD Pipeline
+
+on:
+  pull_request:
+    branches:
+      - master
+      - main
+      
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build and test
+    runs-on: ubuntu-latest
+    if: github.repository == 'BryanFRD/PISCINE_MSc1'
+    services:
+      db:
+        image: postgres:latest
+        env:
+          POSTGRES_PASSWORD: postgres_password
+          POSTGRES_USER: postgres_user
+          POSTGRES_DB: time_manager_dev
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Elixir
+      uses: erlef/setup-beam@61e01a43a562a89bfc54c7f9a378ff67b03e4a21
+      with:
+        elixir-version: '1.15.2'
+        otp-version: '26.0'
+
+    - name: Restore dependencies cache
+      uses: actions/cache@v3
+      with:
+        path: deps
+        key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+        restore-keys: ${{ runner.os }}-mix-
+
+    - name: Install dependencies
+      run: |
+        cd backend
+        mix deps.get
+
+    - name: Wait for DB
+      run: |
+        while ! pg_isready -h localhost -p 5432; do
+          echo "Waiting for database..."
+          sleep 2
+        done
+    
+    - name: Create and migrate database
+      run: |
+        cd backend
+        mix ecto.setup
+
+    - name: Run tests
+      run: |
+        cd backend
+        mix test

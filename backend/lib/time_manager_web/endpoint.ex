@@ -32,7 +32,7 @@ defmodule TimeManagerWeb.Endpoint do
     plug Phoenix.Ecto.CheckRepoStatus, otp_app: :time_manager
   end
 
-  plug CORSPlug, origin: ["http://localhost:5173"]
+  plug CORSPlug
 
   plug Plug.RequestId
   plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]

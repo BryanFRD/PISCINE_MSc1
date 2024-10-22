@@ -36,7 +36,10 @@ Link :
 | ``cd T-POO-700-LIL_2/frontend ``   |  ``cd T-POO-700-LIL_2/backend ``   |
 
 
+## Continuous Integration
+Continuous Integration available [here](https://github.com/BryanFRD/PISCINE_MSc1) 
 
+![Nom de l'Action](https://github.com/BryanFRD/PISCINE_MSc1/actions/workflows/deploy.yml/badge.svg)
 
 ## Authors
 
