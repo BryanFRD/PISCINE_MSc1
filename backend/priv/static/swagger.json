@@ -517,30 +517,55 @@
       },
       "description": "Attributes for creating or updating a user"
     },
+    "ClockAttributes": {
+      "type": "object",
+      "title": "ClockAttributes",
+      "required": [
+        "status",
+        "time"
+      ],
+      "properties": {
+        "time": {
+          "type": "datetime",
+          "description": "Timestamp for clock"
+        },
+        "status": {
+          "type": "boolean",
+          "description": "Clock in or out"
+        }
+      },
+      "example": {
+        "time": "2024-10-08 12:00:00",
+        "status": true
+      },
+      "description": "Attributes for creating a clock"
+    },
+    "Workingtime": {
     "Clock": {
       "type": "object",
-      "title": "Clock",
+      "title": "Workingtime",
       "required": [
         "user",
-        "status",
+        "end_time",
+        "start",
         "id"
       ],
       "properties": {
         "user": {
           "type": "User",
-          "description": "The user creating this clock"
+          "description": "The user creating this working time"
         },
-        "time": {
+        "start": {
           "type": "datetime",
-          "description": "Time of day"
-        },
-        "status": {
-          "type": "boolean",
-          "description": "Indicates whether the clock is in or out"
+          "description": "The start time of the working time"
         },
         "id": {
-          "type": "string",
-          "description": "Unique identifier for the clock"
+          "type": "number",
+          "description": "Unique identifier for the user"
+        },
+        "end_time": {
+          "type": "datetime",
+          "description": "The end time of the working time (field: 'end')"
         }
       },
       "example": {
@@ -549,11 +574,19 @@
           "id": 1,
           "email": "john.doe@email.com"
         },
-        "time": "2024-10-08 12:00:00",
-        "status": true,
-        "id": 1
+        "start": "2024-10-08 08:00:00",
+        "id": 1,
+        "end": "2024-10-08 17:00:00"
       },
-      "description": "Timestamp of clock in or out for a user"
+      "description": "A user's working time"
+    },
+    "Workingtimes": {
+      "type": "array",
+      "title": "Workingtimes",
+      "items": {
+        "$ref": "#/definitions/Workingtime"
+      },
+      "description": "A collection of Workingtimes"
     },
     "ClockAttributes": {
       "type": "object",
@@ -630,31 +663,30 @@
       },
       "description": "A user of the application"
     },
-    "Workingtime": {
+    "Clock": {
       "type": "object",
-      "title": "Workingtime",
+      "title": "Clock",
       "required": [
         "user",
-        "end_time",
-        "start",
+        "status",
         "id"
       ],
       "properties": {
         "user": {
           "type": "User",
-          "description": "The user creating this working time"
+          "description": "The user creating this clock"
         },
-        "start": {
+        "time": {
           "type": "datetime",
-          "description": "The start time of the working time"
+          "description": "Time of day"
+        },
+        "status": {
+          "type": "boolean",
+          "description": "Indicates whether the clock is in or out"
         },
         "id": {
-          "type": "number",
-          "description": "Unique identifier for the user"
-        },
-        "end_time": {
-          "type": "datetime",
-          "description": "The end time of the working time (field: 'end')"
+          "type": "string",
+          "description": "Unique identifier for the clock"
         }
       },
       "example": {
@@ -663,11 +695,11 @@
           "id": 1,
           "email": "john.doe@email.com"
         },
-        "start": "2024-10-08 08:00:00",
-        "id": 1,
-        "end": "2024-10-08 17:00:00"
+        "time": "2024-10-08 12:00:00",
+        "status": true,
+        "id": 1
       },
-      "description": "A user's working time"
+      "description": "Timestamp of clock in or out for a user"
     },
     "Users": {
       "type": "array",
@@ -679,11 +711,11 @@
     },
     "Workingtimes": {
       "type": "array",
-      "title": "Workingtimes",
+      "title": "Users",
       "items": {
-        "$ref": "#/definitions/Workingtime"
+        "$ref": "#/definitions/User"
       },
-      "description": "A collection of Workingtimes"
+      "description": "A collection of Users"
     }
   },
   "host": "localhost:4000",

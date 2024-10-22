@@ -1,19 +1,19 @@
 meta {
-  name: Create user
+  name: Register
   type: http
   seq: 3
 }
 
 post {
-  url: {{api_url}}/users
+  url: {{api_url}}/auth/register
   body: json
   auth: none
 }
 
 body:json {
   {
-    "username": "john",
-    "email": "john.doe@email.com",
+    "username": "john1",
+    "email": "john.doe1@email.com",
     "password": "Testyy1234!?",
     "password_confirmation": "Testyy1234!?"
   }

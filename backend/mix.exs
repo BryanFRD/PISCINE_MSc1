@@ -41,6 +41,7 @@ defmodule TimeManager.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:bcrypt_elixir, "~> 3.0"},
       {:phoenix, "~> 1.7.14"},
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.10"},
@@ -55,7 +56,8 @@ defmodule TimeManager.MixProject do
       {:ex_json_schema, "~> 0.5"},
       {:poison, "~> 3.1"},
       {:ex_doc, "~> 0.30", only: :dev, runtime: false},
-      {:cors_plug, "~> 3.0"}
+      {:cors_plug, "~> 3.0"},
+      {:guardian, "~> 2.3.2"}
     ]
   end
 

@@ -1,10 +1,8 @@
 <script setup>
 import { useColorMode } from '@vueuse/core'
 import { Laptop, LogOut, Moon, Settings2, Sun } from 'lucide-vue-next'
-import { computed, onMounted, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed } from 'vue'
 
-import { instance } from '@/api/instance'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,44 +15,18 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import { useAuthStore } from '@/stores/authStore'
 
-const route = useRoute()
+const authStore = useAuthStore()
 
 const mode = useColorMode()
 
-const userId = computed(() => route.params.userId)
+const user = computed(() => authStore.user)
 
-const user = ref({
-  id: null,
-  username: null,
-  email: null
-})
-const userLoading = ref(false)
-const userError = ref(null)
-
-const userInitialized = ref(false)
-
-const getUser = async () => {
-  userLoading.value = true
-  userError.value = null
-
-  try {
-    const result = await instance.get(`/users/${userId.value}`)
-
-    user.value = result.data
-    userInitialized.value = true
-  } catch {
-    userError.value = 'Failed to fetch user'
-  } finally {
-    userLoading.value = false
-  }
+const logOut = () => {
+  authStore.user = null
+  localStorage.removeItem('time-manager-token')
 }
-
-watch(
-  () => userId.value,
-  () => getUser()
-)
-onMounted(() => getUser())
 </script>
 
 <template>
@@ -65,14 +37,14 @@ onMounted(() => getUser())
 
     <DropdownMenuContent align="end" class="w-56">
       <DropdownMenuLabel>
-        <p>{{ user.username }}</p>
-        <p class="font-normal text-muted-foreground">{{ user.email }}</p>
+        <p>{{ user?.username }}</p>
+        <p class="font-normal text-muted-foreground">{{ user?.email }}</p>
       </DropdownMenuLabel>
 
       <DropdownMenuSeparator />
 
       <DropdownMenuItem as-child class="gap-x-2">
-        <RouterLink :to="{ name: 'account', params: { userId } }">
+        <RouterLink :to="{ name: 'account' }">
           <Settings2 class="size-4" />
           <span>Account</span>
         </RouterLink>
@@ -105,7 +77,7 @@ onMounted(() => getUser())
 
       <DropdownMenuSeparator />
 
-      <DropdownMenuItem class="gap-x-2" disabled>
+      <DropdownMenuItem class="gap-x-2" @click="logOut">
         <LogOut class="size-4" />
         <span>Log out</span>
       </DropdownMenuItem>

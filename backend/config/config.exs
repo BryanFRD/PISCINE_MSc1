@@ -22,6 +22,10 @@ config :time_manager, TimeManagerWeb.Endpoint,
   pubsub_server: TimeManager.PubSub,
   live_view: [signing_salt: "uNruWVsX"]
 
+config :time_manager, TimeManager.Users.Guardian,
+  issuer: "time_manager",
+  secret_key: "2q5zBNSgIe1HZ3FNiJh9rsF0lbZwqb/kCodXJUyyLtn+Fs1miFwGAKyU1adu8FDr"
+
 config :time_manager, :phoenix_swagger,
   swagger_files: %{
     "priv/static/swagger.json" => [
