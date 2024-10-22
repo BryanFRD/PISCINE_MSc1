@@ -39,7 +39,7 @@ Link :
 ## Continuous Integration
 Continuous Integration available [here](https://github.com/BryanFRD/PISCINE_MSc1) 
 
-[![Build Status](https://travis-ci.com/BryanFRD/PISCINE_MSc1.svg?branch=master)](https://travis-ci.com/BryanFRD/PISCINE_MSc1)
+![Nom de l'Action](https://github.com/BryanFRD/PISCINE_MSc1/actions/workflows/deploy.yml/badge.svg)
 
 ## Authors
 
