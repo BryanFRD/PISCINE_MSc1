@@ -11,10 +11,9 @@ permissions:
 
 jobs:
   build:
-
     name: Build and test
     runs-on: ubuntu-latest
-
+    if: github.repository == 'BryanFRD/PISCINE_MSc1'
     services:
       db:
         image: postgres:latest
