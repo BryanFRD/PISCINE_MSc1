@@ -9,6 +9,10 @@ defmodule TimeManagerWeb.ClockJSON do
     data(clock)
   end
 
+  def error(%{message: message}) do
+    %{error: message}
+  end
+
   defp data(%Clock{} = clock) do
     clock = Repo.preload(clock, :user)
 

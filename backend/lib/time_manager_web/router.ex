@@ -36,6 +36,9 @@ defmodule TimeManagerWeb.Router do
     post "/workingtimes/:user_id", WorkingtimeController, :create
     put "/workingtimes/:id", WorkingtimeController, :update
     delete "/workingtimes/:id", WorkingtimeController, :delete
+
+    # Teams
+    resources "/teams", TeamController, except: [:new, :edit]
   end
 
   def swagger_info do

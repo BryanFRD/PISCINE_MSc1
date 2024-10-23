@@ -610,35 +610,6 @@
       },
       "description": "A collection of Workingtimes"
     },
-    "User": {
-      "type": "object",
-      "title": "User",
-      "required": [
-        "username",
-        "email",
-        "id"
-      ],
-      "properties": {
-        "username": {
-          "type": "string",
-          "description": "The user's username"
-        },
-        "id": {
-          "type": "number",
-          "description": "Unique identifier for the user"
-        },
-        "email": {
-          "type": "string",
-          "description": "The user's email address"
-        }
-      },
-      "example": {
-        "username": "Joe",
-        "id": 1,
-        "email": "joe@mail.com"
-      },
-      "description": "A user of the application"
-    },
     "Clock": {
       "type": "object",
       "title": "Clock",
@@ -676,6 +647,35 @@
         "id": 1
       },
       "description": "Timestamp of clock in or out for a user"
+    },
+    "User": {
+      "type": "object",
+      "title": "User",
+      "required": [
+        "username",
+        "email",
+        "id"
+      ],
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "The user's username"
+        },
+        "id": {
+          "type": "number",
+          "description": "Unique identifier for the user"
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's email address"
+        }
+      },
+      "example": {
+        "username": "Joe",
+        "id": 1,
+        "email": "joe@mail.com"
+      },
+      "description": "A user of the application"
     },
     "Users": {
       "type": "array",

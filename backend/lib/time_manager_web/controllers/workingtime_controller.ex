@@ -2,9 +2,11 @@ defmodule TimeManagerWeb.WorkingtimeController do
   use TimeManagerWeb, :controller
   use PhoenixSwagger
 
+  alias TimeManager.Repo
   alias TimeManager.Users
   alias TimeManager.Workingtimes
   alias TimeManager.Workingtimes.Workingtime
+  alias TimeManager.Users.Guardian
 
   action_fallback TimeManagerWeb.FallbackController
 
@@ -59,8 +61,17 @@ defmodule TimeManagerWeb.WorkingtimeController do
   end
 
   def index(conn, %{"user_id" => user_id} = params) do
-    workingtimes = Workingtimes.list_user_workingtimes(user_id, params)
-    render(conn, :index, workingtimes: workingtimes)
+    current_user = Guardian.Plug.current_resource(conn)
+    user = Users.get_user!(user_id)
+
+    if Users.can_manager_user?(current_user, user) do
+      workingtimes = Workingtimes.list_user_workingtimes(user_id, params)
+      render(conn, :index, workingtimes: workingtimes)
+    else
+      conn
+      |> put_status(:forbidden)
+      |> render(:error, message: "You are not authorized to view this user's workingtimes")
+    end
   end
 
   swagger_path :index do
@@ -84,8 +95,17 @@ defmodule TimeManagerWeb.WorkingtimeController do
   end
 
   def paginate(conn, %{"user_id" => user_id} = params) do
-    workingtimes = Workingtimes.paginate_user_workingtimes(user_id, params)
-    render(conn, :paginate, workingtimes: workingtimes)
+    current_user = Guardian.Plug.current_resource(conn)
+    user = Users.get_user!(user_id)
+
+    if Users.can_manager_user?(current_user, user) do
+      workingtimes = Workingtimes.paginate_user_workingtimes(user_id, params)
+      render(conn, :paginate, workingtimes: workingtimes)
+    else
+      conn
+      |> put_status(:forbidden)
+      |> render(:error, message: "You are not authorized to view this user's workingtimes")
+    end
   end
 
   swagger_path :paginate do
@@ -112,14 +132,21 @@ defmodule TimeManagerWeb.WorkingtimeController do
   end
 
   def create(conn, workingtime_params) do
-    Users.get_user!(workingtime_params["user_id"])
+    current_user = Guardian.Plug.current_resource(conn)
+    user = Users.get_user!(workingtime_params["user_id"])
 
-    with {:ok, %Workingtime{} = workingtime} <-
-           Workingtimes.create_workingtime(workingtime_params) do
+    if Users.manager_can_manager_user?(current_user, user) do
+      with {:ok, %Workingtime{} = workingtime} <-
+             Workingtimes.create_workingtime(workingtime_params) do
+        conn
+        |> put_status(:created)
+        |> put_resp_header("location", ~p"/api/workingtimes/#{workingtime}")
+        |> render(:show, workingtime: workingtime)
+      end
+    else
       conn
-      |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/workingtimes/#{workingtime}")
-      |> render(:show, workingtime: workingtime)
+      |> put_status(:forbidden)
+      |> render(:error, message: "You are not authorized to create a workingtime for this user")
     end
   end
 
@@ -142,8 +169,17 @@ defmodule TimeManagerWeb.WorkingtimeController do
   end
 
   def show(conn, %{"user_id" => user_id, "id" => id}) do
-    workingtime = Workingtimes.get_user_workingtime!(user_id, id)
-    render(conn, :show, workingtime: workingtime)
+    current_user = Guardian.Plug.current_resource(conn)
+    user = Users.get_user!(user_id)
+
+    if Users.can_manager_user?(current_user, user) do
+      workingtime = Workingtimes.get_user_workingtime!(user_id, id)
+      render(conn, :show, workingtime: workingtime)
+    else
+      conn
+      |> put_status(:forbidden)
+      |> render(:error, message: "You are not authorized to view this user's workingtimes")
+    end
   end
 
   swagger_path :show do
@@ -160,11 +196,20 @@ defmodule TimeManagerWeb.WorkingtimeController do
   end
 
   def update(conn, %{"id" => id} = workingtime_params) do
-    workingtime = Workingtimes.get_workingtime!(id)
+    current_user = Guardian.Plug.current_resource(conn)
 
-    with {:ok, %Workingtime{} = workingtime} <-
-           Workingtimes.update_workingtime(workingtime, workingtime_params) do
-      render(conn, :show, workingtime: workingtime)
+    workingtime = Workingtimes.get_workingtime!(id)
+    workingtime = Repo.preload(workingtime, :user)
+
+    if Users.manager_can_manager_user?(current_user, workingtime.user) do
+      with {:ok, %Workingtime{} = workingtime} <-
+             Workingtimes.update_workingtime(workingtime, workingtime_params) do
+        render(conn, :show, workingtime: workingtime)
+      end
+    else
+      conn
+      |> put_status(:forbidden)
+      |> render(:error, message: "You are not authorized to update this workingtime")
     end
   end
 
@@ -187,10 +232,19 @@ defmodule TimeManagerWeb.WorkingtimeController do
   end
 
   def delete(conn, %{"id" => id}) do
-    workingtime = Workingtimes.get_workingtime!(id)
+    current_user = Guardian.Plug.current_resource(conn)
 
-    with {:ok, %Workingtime{}} <- Workingtimes.delete_workingtime(workingtime) do
-      send_resp(conn, :no_content, "")
+    workingtime = Workingtimes.get_workingtime!(id)
+    workingtime = Repo.preload(workingtime, :user)
+
+    if Users.manager_can_manager_user?(current_user, workingtime.user) do
+      with {:ok, %Workingtime{}} <- Workingtimes.delete_workingtime(workingtime) do
+        send_resp(conn, :no_content, "")
+      end
+    else
+      conn
+      |> put_status(:forbidden)
+      |> render(:error, message: "You are not authorized to delete this workingtime")
     end
   end
 

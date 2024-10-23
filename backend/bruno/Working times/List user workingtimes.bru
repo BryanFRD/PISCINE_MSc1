@@ -5,11 +5,15 @@ meta {
 }
 
 get {
-  url: {{api_url}}/workingtimes/1?order_by=start
+  url: {{api_url}}/workingtimes/4?order_by=start
   body: none
   auth: none
 }
 
 params:query {
   order_by: start
+}
+
+headers {
+  Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0aW1lX21hbmFnZXIiLCJleHAiOjE3MzE1OTIxMDEsImlhdCI6MTcyOTE3MjkwMSwiaXNzIjoidGltZV9tYW5hZ2VyIiwianRpIjoiMmRkMTFmZGMtOTNmMC00YTM0LWI2YzItYjk1YWM1YzFjMTc5IiwibmJmIjoxNzI5MTcyOTAwLCJzdWIiOiIzIiwidHlwIjoiYWNjZXNzIn0.bNwjmCfu5WcLvKIaXxHDmnXHZIGhHQjnrRGFtjpHMohu1EF3KaUksdKtKEaNnIFRrRQK5Lisy0qVQXWPCJZKGg
 }

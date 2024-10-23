@@ -28,6 +28,10 @@ defmodule TimeManagerWeb.WorkingtimeJSON do
     data(workingtime)
   end
 
+  def error(%{message: message}) do
+    %{error: message}
+  end
+
   defp data(%Workingtime{} = workingtime) do
     workingtime = Repo.preload(workingtime, :user)
 

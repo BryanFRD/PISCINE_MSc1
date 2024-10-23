@@ -9,6 +9,7 @@ defmodule TimeManager.Users do
 
   alias TimeManager.Users.User
   alias TimeManager.Clocks.Clock
+  alias TimeManager.Teams
 
   @doc """
   Returns the list of users.
@@ -89,9 +90,9 @@ defmodule TimeManager.Users do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_user(%User{} = user, attrs) do
+  def update_user(%User{} = user, attrs, current_user) do
     user
-    |> User.changeset(attrs)
+    |> User.changeset(attrs, current_user)
     |> Repo.update()
   end
 
@@ -146,4 +147,33 @@ defmodule TimeManager.Users do
         end
     end
   end
+
+  def can_manager_user?(%User{id: user_id1}, %User{id: user_id2}) when user_id1 == user_id2,
+    do: true
+
+  def can_manager_user?(%User{role: "admin"}, _), do: true
+
+  def can_manager_user?(manager, user) do
+    if Teams.is_user_manager?(manager, user) do
+      true
+    else
+      false
+    end
+  end
+
+  def manager_can_manager_user?(%User{role: "admin"}, _), do: true
+
+  def manager_can_manager_user?(manager, user) do
+    if Teams.is_user_manager?(manager, user) do
+      true
+    else
+      false
+    end
+  end
+
+  def user_can_manager_user?(%User{id: user_id1}, %User{id: user_id2}) when user_id1 == user_id2,
+    do: true
+
+  def user_can_manager_user?(%User{role: "admin"}, _), do: true
+  def user_can_manager_user?(_, _), do: false
 end

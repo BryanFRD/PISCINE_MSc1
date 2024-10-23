@@ -2,8 +2,11 @@ defmodule TimeManagerWeb.ClockController do
   use TimeManagerWeb, :controller
   use PhoenixSwagger
 
+  alias TimeManager.Repo
   alias TimeManager.Clocks
   alias TimeManager.Clocks.Clock
+  alias TimeManager.Users
+  alias TimeManager.Users.Guardian
 
   action_fallback TimeManagerWeb.FallbackController
 
@@ -51,8 +54,17 @@ defmodule TimeManagerWeb.ClockController do
   end
 
   def show(conn, %{"user_id" => user_id}) do
+    current_user = Guardian.Plug.current_resource(conn)
     clock = Clocks.get_user_clock!(user_id)
-    render(conn, :show, clock: clock)
+    clock = Repo.preload(clock, :user)
+
+    if Users.can_manager_user?(current_user, clock.user) do
+      render(conn, :show, clock: clock)
+    else
+      conn
+      |> put_status(:forbidden)
+      |> render(:error, message: "You are not authorized to view this clock")
+    end
   end
 
   swagger_path :index do
@@ -67,10 +79,17 @@ defmodule TimeManagerWeb.ClockController do
   end
 
   def update(conn, %{"user_id" => user_id} = clock_params) do
+    current_user = Guardian.Plug.current_resource(conn)
     clock = Clocks.get_user_clock!(user_id)
 
-    with {:ok, %Clock{} = clock} <- Clocks.update_clock(clock, clock_params) do
-      render(conn, :show, clock: clock)
+    if Users.user_can_manager_user?(current_user, clock.user) do
+      with {:ok, %Clock{} = clock} <- Clocks.update_clock(clock, clock_params) do
+        render(conn, :show, clock: clock)
+      end
+    else
+      conn
+      |> put_status(:forbidden)
+      |> render(:error, message: "You are not authorized to update this clock")
     end
   end
 
