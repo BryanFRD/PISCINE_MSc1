@@ -1,11 +1,13 @@
 {
-  "basePath": "/api",
   "swagger": "2.0",
   "basePath": "/api",
+  "swagger": "2.0",
   "paths": {
     "/workingtimes/{user_id}/{id}": {
       "get": {
-        "tags": ["Workingtime"],
+        "tags": [
+          "Workingtime"
+        ],
         "summary": "",
         "responses": {
           "404": {
@@ -40,7 +42,9 @@
     },
     "/workingtimes/{user_id}/paginate": {
       "get": {
-        "tags": ["Workingtime"],
+        "tags": [
+          "Workingtime"
+        ],
         "summary": "",
         "responses": {
           "404": {
@@ -110,7 +114,9 @@
     },
     "/workingtimes/{user_id}": {
       "post": {
-        "tags": ["Workingtime"],
+        "tags": [
+          "Workingtime"
+        ],
         "summary": "",
         "responses": {
           "422": {
@@ -151,7 +157,9 @@
         "description": "Create a new workingtime for a user"
       },
       "get": {
-        "tags": ["Workingtime"],
+        "tags": [
+          "Workingtime"
+        ],
         "summary": "",
         "responses": {
           "404": {
@@ -207,7 +215,9 @@
     },
     "/workingtimes/{id}": {
       "put": {
-        "tags": ["Workingtime"],
+        "tags": [
+          "Workingtime"
+        ],
         "summary": "",
         "responses": {
           "422": {
@@ -248,7 +258,9 @@
         "description": "Update workingtime"
       },
       "delete": {
-        "tags": ["Workingtime"],
+        "tags": [
+          "Workingtime"
+        ],
         "summary": "",
         "responses": {
           "404": {
@@ -273,7 +285,9 @@
     },
     "/users/{id}": {
       "put": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "summary": "",
         "responses": {
           "422": {
@@ -314,7 +328,9 @@
         "description": "Update user"
       },
       "get": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "summary": "",
         "responses": {
           "404": {
@@ -340,7 +356,9 @@
         "description": "Show a single user"
       },
       "delete": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "summary": "",
         "responses": {
           "404": {
@@ -365,7 +383,9 @@
     },
     "/users": {
       "post": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "summary": "",
         "responses": {
           "422": {
@@ -396,7 +416,9 @@
         "description": "Create a new user"
       },
       "get": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "summary": "",
         "responses": {
           "200": {
@@ -428,7 +450,9 @@
     },
     "/clocks/{user_id}": {
       "put": {
-        "tags": ["Clock"],
+        "tags": [
+          "Clock"
+        ],
         "summary": "",
         "responses": {
           "422": {
@@ -471,13 +495,30 @@
     }
   },
   "definitions": {
+    "WorkingtimeAttributes": {
+      "type": "object",
+      "title": "WorkingtimeAttributes",
+      "required": ["end_time", "start"],
+      "properties": {
+        "start": {
+          "type": "datetime",
+          "description": "The start time of the working time"
+        },
+        "end_time": {
+          "type": "datetime",
+          "description": "The end time of the working time"
+        }
+      },
+      "example": {
+        "start": "2024-10-08 08:00:00",
+        "end": "2024-10-08 17:00:00"
+      },
+      "description": "Attributes for creating or updating a workingtime"
+    },
     "UserAttributes": {
       "type": "object",
-      "title": "UserAttributes",
-      "required": [
-        "username",
-        "email"
-      ],
+      "title": "Workingtime",
+      "required": ["user", "end_time", "start", "id"],
       "properties": {
         "user": {
           "type": "User",
@@ -502,10 +543,37 @@
       },
       "description": "Attributes for creating or updating a user"
     },
+    "ClockAttributes": {
+      "type": "object",
+      "title": "ClockAttributes",
+      "required": [
+        "status",
+        "time"
+      ],
+      "properties": {
+        "time": {
+          "type": "datetime",
+          "description": "Timestamp for clock"
+        },
+        "status": {
+          "type": "boolean",
+          "description": "Clock in or out"
+        }
+      },
+      "example": {
+        "time": "2024-10-08 12:00:00",
+        "status": true
+      },
+      "description": "Attributes for creating a clock"
+    },
     "Clock": {
       "type": "object",
       "title": "Clock",
-      "required": ["user", "status", "id"],
+      "required": [
+        "user",
+        "status",
+        "id"
+      ],
       "properties": {
         "user": {
           "type": "User",
@@ -536,56 +604,14 @@
       },
       "description": "Timestamp of clock in or out for a user"
     },
-    "ClockAttributes": {
-      "type": "object",
-      "title": "ClockAttributes",
-      "required": [
-        "status",
-        "time"
-      ],
-      "properties": {
-        "time": {
-          "type": "datetime",
-          "description": "Timestamp for clock"
-        },
-        "status": {
-          "type": "boolean",
-          "description": "Clock in or out"
-        }
-      },
-      "example": {
-        "time": "2024-10-08 12:00:00",
-        "status": true
-      },
-      "description": "Attributes for creating a clock"
-    },
-    "WorkingtimeAttributes": {
-      "type": "object",
-      "title": "WorkingtimeAttributes",
-      "required": [
-        "end_time",
-        "start"
-      ],
-      "properties": {
-        "start": {
-          "type": "datetime",
-          "description": "The start time of the working time"
-        },
-        "end_time": {
-          "type": "datetime",
-          "description": "The end time of the working time"
-        }
-      },
-      "example": {
-        "start": "2024-10-08 08:00:00",
-        "end": "2024-10-08 17:00:00"
-      },
-      "description": "Attributes for creating or updating a workingtime"
-    },
     "User": {
       "type": "object",
       "title": "User",
-      "required": ["username", "email", "id"],
+      "required": [
+        "username",
+        "email",
+        "id"
+      ],
       "properties": {
         "username": {
           "type": "string",
@@ -607,15 +633,18 @@
       },
       "description": "A user of the application"
     },
+    "Users": {
+      "type": "array",
+      "title": "Users",
+      "items": {
+        "$ref": "#/definitions/User"
+      },
+      "description": "A collection of Users"
+    },
     "Workingtime": {
       "type": "object",
       "title": "Workingtime",
-      "required": [
-        "user",
-        "end_time",
-        "start",
-        "id"
-      ],
+      "required": ["user", "end_time", "start", "id"],
       "properties": {
         "user": {
           "type": "User",
@@ -645,14 +674,6 @@
         "end": "2024-10-08 17:00:00"
       },
       "description": "A user's working time"
-    },
-    "Users": {
-      "type": "array",
-      "title": "Users",
-      "items": {
-        "$ref": "#/definitions/User"
-      },
-      "description": "A collection of Users"
     },
     "Workingtimes": {
       "type": "array",
