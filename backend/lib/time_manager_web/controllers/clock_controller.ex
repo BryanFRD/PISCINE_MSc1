@@ -81,6 +81,7 @@ defmodule TimeManagerWeb.ClockController do
   def update(conn, %{"user_id" => user_id} = clock_params) do
     current_user = Guardian.Plug.current_resource(conn)
     clock = Clocks.get_user_clock!(user_id)
+    clock = Repo.preload(clock, :user)
 
     if Users.user_can_manager_user?(current_user, clock.user) do
       with {:ok, %Clock{} = clock} <- Clocks.update_clock(clock, clock_params) do
