@@ -52,12 +52,12 @@ const workAndBreakTimes = computed(() => {
     totalWorkedMinutes += differenceInMinutes(endTime, startTime)
   })
 
-  const workingTime = totalWorkedMinutes / 60
+  const workingTime = Math.round(totalWorkedMinutes / 60)
 
   const totalDayMinutes = differenceInMinutes(latestEnd, earliestStart)
 
   const breakMinutes = totalDayMinutes - totalWorkedMinutes
-  const breakTime = breakMinutes / 60
+  const breakTime = Math.round(breakMinutes / 60)
 
   return {
     workingTime,

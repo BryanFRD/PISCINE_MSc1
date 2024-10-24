@@ -1,4 +1,5 @@
 {
+  "swagger": "2.0",
   "basePath": "/api",
   "swagger": "2.0",
   "paths": {
@@ -494,21 +495,10 @@
     }
   },
   "definitions": {
-    "Workingtimes": {
-      "type": "array",
-      "title": "Workingtimes",
-      "items": {
-        "$ref": "#/definitions/Workingtime"
-      },
-      "description": "A collection of Workingtimes"
-    },
     "WorkingtimeAttributes": {
       "type": "object",
       "title": "WorkingtimeAttributes",
-      "required": [
-        "end_time",
-        "start"
-      ],
+      "required": ["end_time", "start"],
       "properties": {
         "start": {
           "type": "datetime",
@@ -525,15 +515,10 @@
       },
       "description": "Attributes for creating or updating a workingtime"
     },
-    "Workingtime": {
+    "UserAttributes": {
       "type": "object",
       "title": "Workingtime",
-      "required": [
-        "user",
-        "end_time",
-        "start",
-        "id"
-      ],
+      "required": ["user", "end_time", "start", "id"],
       "properties": {
         "user": {
           "type": "User",
@@ -553,16 +538,10 @@
         }
       },
       "example": {
-        "user": {
-          "username": "john_doe",
-          "id": 1,
-          "email": "john.doe@email.com"
-        },
-        "start": "2024-10-08 08:00:00",
-        "id": 1,
-        "end": "2024-10-08 17:00:00"
+        "username": "john_doe",
+        "email": "john.doe@email.com"
       },
-      "description": "A user's working time"
+      "description": "Attributes for creating or updating a user"
     },
     "ClockAttributes": {
       "type": "object",
@@ -625,29 +604,6 @@
       },
       "description": "Timestamp of clock in or out for a user"
     },
-    "UserAttributes": {
-      "type": "object",
-      "title": "UserAttributes",
-      "required": [
-        "username",
-        "email"
-      ],
-      "properties": {
-        "username": {
-          "type": "string",
-          "description": "The user's username"
-        },
-        "email": {
-          "type": "string",
-          "description": "The user's email address"
-        }
-      },
-      "example": {
-        "username": "john_doe",
-        "email": "john.doe@email.com"
-      },
-      "description": "Attributes for creating or updating a user"
-    },
     "User": {
       "type": "object",
       "title": "User",
@@ -684,6 +640,48 @@
         "$ref": "#/definitions/User"
       },
       "description": "A collection of Users"
+    },
+    "Workingtime": {
+      "type": "object",
+      "title": "Workingtime",
+      "required": ["user", "end_time", "start", "id"],
+      "properties": {
+        "user": {
+          "type": "User",
+          "description": "The user creating this working time"
+        },
+        "start": {
+          "type": "datetime",
+          "description": "The start time of the working time"
+        },
+        "id": {
+          "type": "number",
+          "description": "Unique identifier for the user"
+        },
+        "end_time": {
+          "type": "datetime",
+          "description": "The end time of the working time (field: 'end')"
+        }
+      },
+      "example": {
+        "user": {
+          "username": "john_doe",
+          "id": 1,
+          "email": "john.doe@email.com"
+        },
+        "start": "2024-10-08 08:00:00",
+        "id": 1,
+        "end": "2024-10-08 17:00:00"
+      },
+      "description": "A user's working time"
+    },
+    "Workingtimes": {
+      "type": "array",
+      "title": "Workingtimes",
+      "items": {
+        "$ref": "#/definitions/Workingtime"
+      },
+      "description": "A collection of Workingtimes"
     }
   },
   "host": "localhost:4000",
