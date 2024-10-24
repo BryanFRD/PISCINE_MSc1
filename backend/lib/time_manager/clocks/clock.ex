@@ -23,9 +23,6 @@ defmodule TimeManager.Clocks.Clock do
     if get_change(changeset, :time) do
       changeset
       |> validate_required([:time])
-      |> validate_format(:time, ~r/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/,
-        message: "must be in the format YYYY-MM-DD HH:MM:SS"
-      )
     else
       changeset
     end

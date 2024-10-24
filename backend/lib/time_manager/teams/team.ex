@@ -23,8 +23,11 @@ defmodule TimeManager.Teams.Team do
     |> put_manager_ids(attrs["manager_ids"])
   end
 
+  defp is_create?(%Ecto.Changeset{data: %{__meta__: %{state: :built}}}), do: true
+  defp is_create?(_), do: false
+
   defp maybe_validate_name(changeset) do
-    if get_change(changeset, :name) do
+    if is_create?(changeset) or get_change(changeset, :name) do
       changeset
       |> validate_required([:name])
       |> validate_length(:name, min: 3, max: 30)

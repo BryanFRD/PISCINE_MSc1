@@ -7,24 +7,33 @@ defmodule TimeManager.TeamsTest do
     alias TimeManager.Teams.Team
 
     import TimeManager.TeamsFixtures
+    import TimeManager.UsersFixtures
 
-    @invalid_attrs %{name: nil}
+    @invalid_attrs %{name: "1", manager_ids: [], user_ids: []}
 
     test "list_teams/0 returns all teams" do
       team = team_fixture()
-      assert Teams.list_teams() == [team]
+      list_teams = Teams.list_teams()
+
+      assert length(list_teams) > 0
+      assert hd(list_teams).id == team.id
+      assert hd(list_teams).name == team.name
     end
 
     test "get_team!/1 returns the team with given id" do
       team = team_fixture()
-      assert Teams.get_team!(team.id) == team
+      get_team = Teams.get_team!(team.id)
+
+      assert get_team.id == team.id
+      assert get_team.name == team.name
     end
 
     test "create_team/1 with valid data creates a team" do
-      valid_attrs = %{name: "some name"}
+      user = user_fixture()
+      valid_attrs = %{name: "Team 1", manager_ids: [user.id]}
 
       assert {:ok, %Team{} = team} = Teams.create_team(valid_attrs)
-      assert team.name == "some name"
+      assert team.name == "Team 1"
     end
 
     test "create_team/1 with invalid data returns error changeset" do
@@ -33,16 +42,18 @@ defmodule TimeManager.TeamsTest do
 
     test "update_team/2 with valid data updates the team" do
       team = team_fixture()
-      update_attrs = %{name: "some updated name"}
+      update_attrs = %{name: "Team updated"}
 
       assert {:ok, %Team{} = team} = Teams.update_team(team, update_attrs)
-      assert team.name == "some updated name"
+      assert team.name == "Team updated"
     end
 
     test "update_team/2 with invalid data returns error changeset" do
       team = team_fixture()
       assert {:error, %Ecto.Changeset{}} = Teams.update_team(team, @invalid_attrs)
-      assert team == Teams.get_team!(team.id)
+
+      get_team = Teams.get_team!(team.id)
+      assert get_team.name == team.name
     end
 
     test "delete_team/1 deletes the team" do

@@ -9,7 +9,7 @@ defmodule TimeManager.UsersTest do
 
     import TimeManager.UsersFixtures
 
-    @invalid_attrs %{username: nil, email: nil}
+    @invalid_attrs %{username: nil, email: "notemail", password: nil, password_confirmation: nil}
 
     test "list_users/0 returns all users" do
       user = user_fixture()
@@ -31,11 +31,17 @@ defmodule TimeManager.UsersTest do
     end
 
     test "create_user/1 with valid data creates a user" do
-      valid_attrs = %{username: "john_doe", email: "john.doe@email.com"}
+      valid_attrs = %{
+        username: "john_doe",
+        email: "john.doe@email.com",
+        password: "Testyy1234!?",
+        password_confirmation: "Testyy1234!?"
+      }
 
       assert {:ok, %User{} = user} = Users.create_user(valid_attrs)
       assert user.username == "john_doe"
       assert user.email == "john.doe@email.com"
+      assert user.hashed_password != nil
 
       clock = Clocks.get_user_clock!(user.id)
       assert clock.user_id == user.id

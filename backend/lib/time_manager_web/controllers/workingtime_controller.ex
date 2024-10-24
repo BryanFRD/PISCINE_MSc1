@@ -135,7 +135,7 @@ defmodule TimeManagerWeb.WorkingtimeController do
     current_user = Guardian.Plug.current_resource(conn)
     user = Users.get_user!(workingtime_params["user_id"])
 
-    if Users.manager_can_manager_user?(current_user, user) do
+    if Users.can_manager_user?(current_user, user) do
       with {:ok, %Workingtime{} = workingtime} <-
              Workingtimes.create_workingtime(workingtime_params) do
         conn
@@ -201,7 +201,7 @@ defmodule TimeManagerWeb.WorkingtimeController do
     workingtime = Workingtimes.get_workingtime!(id)
     workingtime = Repo.preload(workingtime, :user)
 
-    if Users.manager_can_manager_user?(current_user, workingtime.user) do
+    if Users.can_manager_user?(current_user, workingtime.user) do
       with {:ok, %Workingtime{} = workingtime} <-
              Workingtimes.update_workingtime(workingtime, workingtime_params) do
         render(conn, :show, workingtime: workingtime)
@@ -237,7 +237,7 @@ defmodule TimeManagerWeb.WorkingtimeController do
     workingtime = Workingtimes.get_workingtime!(id)
     workingtime = Repo.preload(workingtime, :user)
 
-    if Users.manager_can_manager_user?(current_user, workingtime.user) do
+    if Users.can_manager_user?(current_user, workingtime.user) do
       with {:ok, %Workingtime{}} <- Workingtimes.delete_workingtime(workingtime) do
         send_resp(conn, :no_content, "")
       end
