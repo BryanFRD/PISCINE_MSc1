@@ -15,7 +15,9 @@ const user = computed(() => authStore.user)
 const routeNames = [
   { name: 'clock', label: 'Clock' },
   { name: 'working-times', label: 'Working Times' },
-  { name: 'chart-manager', label: 'Charts' }
+  { name: 'chart-manager', label: 'Charts' },
+  { name: 'user-manager', label: 'Users' },
+  { name: 'team-manager', label: 'Teams' }
 ]
 
 watchEffect(() => {

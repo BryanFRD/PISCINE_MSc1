@@ -10,11 +10,11 @@ import { instance } from '@/api/instance'
 import { AutoForm } from '@/components/ui/auto-form'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
-import { useAuthStore } from '@/stores/authStore'
+
 
 import CreateUserDialog from './CreateUserDialog.vue'
 import DeleteUserDialog from './DeleteUserDialog.vue'
-
+import { useAuthStore } from '@/stores/authStore'
 const authStore = useAuthStore()
 
 const user = computed(() => authStore.user)
@@ -39,7 +39,6 @@ const onSubmit = async values => {
     const result = await instance.put(`/users/${user.value.id}`, values)
 
     authStore.user = result.data
-
     toast.success('User updated successfully')
   } catch (result) {
     form.setErrors(result.response.data.errors)
@@ -88,23 +87,25 @@ onMounted(() => {
     </Button>
   </AutoForm>
 
-  <Separator class="mb-4 mt-8" />
+  <div v-if="authStore?.user?.role === 'admin'">
+    <Separator class="mb-4 mt-8" />
 
-  <h3 class="mb-4 text-2xl font-semibold">Actions</h3>
+    <h3 class="mb-4 text-2xl font-semibold">Actions</h3>
 
-  <div class="flex items-center gap-x-2">
-    <CreateUserDialog>
-      <Button>
-        <Plus class="size-4" />
-        <span>Create a user</span>
-      </Button>
-    </CreateUserDialog>
+    <div class="flex items-center gap-x-2">
+      <CreateUserDialog>
+        <Button>
+          <Plus class="size-4" />
+          <span>Create a user</span>
+        </Button>
+      </CreateUserDialog>
 
-    <DeleteUserDialog v-if="user" :user-id="user.id">
-      <Button variant="destructive">
-        <Trash2 class="size-4" />
-        <span>Delete my account</span>
-      </Button>
-    </DeleteUserDialog>
+      <DeleteUserDialog v-if="user" :user-id="user.id">
+        <Button variant="destructive">
+          <Trash2 class="size-4" />
+          <span>Delete this account</span>
+        </Button>
+      </DeleteUserDialog>
+    </div>
   </div>
 </template>

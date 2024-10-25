@@ -18,9 +18,11 @@ const workingTimesError = ref(null)
 const getWorkingTimes = async userId => {
   workingTimesLoading.value = true
   workingTimesError.value = null
- 
+
   try {
-    const result = await instance.get(`/workingtimes/${userId}`)
+    const result = await instance.get(
+      `/workingtimes/${userId}?order_by=start&order=asc`
+    )
     workingTimes.value = result.data
   } catch {
     workingTimesError.value = `Failed to fetch WorkingTimes`

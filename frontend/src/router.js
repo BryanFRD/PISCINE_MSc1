@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+import { useAuthStore } from '@/stores/authStore'
+
 import Login from './components/auth/Login.vue'
 import Public from './components/auth/Public.vue'
 import Register from './components/auth/Register.vue'
@@ -7,7 +9,9 @@ import ChartManager from './components/chartManager/ChartManager.vue'
 import ClockManager from './components/clocks/ClockManager.vue'
 import Home from './components/home/Home.vue'
 import Layout from './components/layout/Layout.vue'
+import TeamManager from './components/team/TeamManager.vue'
 import Account from './components/user/Account.vue'
+import AllUsers from './components/Users/AllUsers.vue'
 import CreateWorkingTime from './components/workingTime/CreateWorkingTime.vue'
 import WorkingTimeManager from './components/workingTime/WorkingTimeManager.vue'
 import WorkingTimes from './components/workingTimes/WorkingTimes.vue'
@@ -41,6 +45,18 @@ const router = createRouter({
           path: '/chart-manager/:userId',
           name: 'chart-manager',
           component: ChartManager
+        },
+        {
+          path: '/user-manager/',
+          name: 'user-manager',
+          component: AllUsers,
+          meta: { requiresAdmin: true }
+        },
+        {
+          path: '/team-manager/',
+          name: 'team-manager',
+          component: TeamManager,
+          meta: { requiresAdmin: true }
         }
       ]
     },
