@@ -18,7 +18,7 @@ const workingTimesError = ref(null)
 const getWorkingTimes = async userId => {
   workingTimesLoading.value = true
   workingTimesError.value = null
-
+ 
   try {
     const result = await instance.get(`/workingtimes/${userId}`)
     workingTimes.value = result.data
@@ -31,7 +31,6 @@ const getWorkingTimes = async userId => {
 
 const formatWorkingTimeForCalendar = workingTimes => {
   if (!Array.isArray(workingTimes)) {
-    console.error('workingTimes is not an array:', workingTimes)
     return []
   }
 
@@ -41,7 +40,7 @@ const formatWorkingTimeForCalendar = workingTimes => {
     dot: true,
     dates: new Date(item.start),
     description: `${item.user.username}'s work: ${format(new Date(item.start), 'HH:mm')} - ${format(new Date(item.end), 'HH:mm')}`,
-    color: colors[index % colors.length]
+    color: 'black'
   }))
 }
 
@@ -81,7 +80,7 @@ onMounted(() => {
 })
 </script>
 <template>
-  <div class="flex justify-between">
+  <div class="flex justify-between space-x-10">
     <div class="left w-1/2">
       <DatePicker
         v-model:model-value="today"

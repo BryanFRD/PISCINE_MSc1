@@ -84,19 +84,16 @@ onMounted(() => getWorkingTime())
       <TableBody>
         <TableRow>
           <TableCell class="text-center">
-            {{
-              format(new Date(workingTime.start), 'MMMM dd, yyyy hh:mm:ss aa')
-            }}
+            {{ format(new Date(workingTime.start), 'MMMM dd, yyyy HH:mm:ss ') }}
           </TableCell>
           <TableCell class="text-center">
-            {{ format(new Date(workingTime.end), 'MMMM dd, yyyy hh:mm:ss aa') }}
+            {{ format(new Date(workingTime.end), 'MMMM dd, yyyy HH:mm:ss ') }}
           </TableCell>
         </TableRow>
       </TableBody>
     </Table>
 
-    <Separator class="mb-4 mt-8" />
-
+   
     <h3 class="mb-4 text-2xl font-semibold">Actions</h3>
 
     <div class="flex items-center gap-x-2">

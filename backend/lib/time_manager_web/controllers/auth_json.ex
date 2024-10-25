@@ -8,7 +8,8 @@ defmodule TimeManagerWeb.AuthJSON do
       user: %{
         id: user.id,
         username: user.username,
-        email: user.email
+        email: user.email,
+        role: user.role
       }
     }
   end
@@ -17,7 +18,8 @@ defmodule TimeManagerWeb.AuthJSON do
     %{
       id: user.id,
       username: user.username,
-      email: user.email
+      email: user.email,
+      role: user.role
     }
   end
 end

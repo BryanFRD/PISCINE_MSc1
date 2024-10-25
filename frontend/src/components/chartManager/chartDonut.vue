@@ -52,12 +52,12 @@ const workAndBreakTimes = computed(() => {
     totalWorkedMinutes += differenceInMinutes(endTime, startTime)
   })
 
-  const workingTime = Math.round(totalWorkedMinutes / 60)
+  const workingTime = Math.round(totalWorkedMinutes)
 
   const totalDayMinutes = differenceInMinutes(latestEnd, earliestStart)
 
   const breakMinutes = totalDayMinutes - totalWorkedMinutes
-  const breakTime = Math.round(breakMinutes / 60)
+  const breakTime = Math.round(breakMinutes)
 
   return {
     workingTime,
@@ -65,7 +65,7 @@ const workAndBreakTimes = computed(() => {
   }
 })
 
-const valueFormatter = value => `${value} hours`
+const valueFormatter = value => `${Math.floor(value/60)} Hours ${value%60} Minutes`
 
 watch(() => route.params.userId, getWorkingTimes)
 onMounted(() => {
