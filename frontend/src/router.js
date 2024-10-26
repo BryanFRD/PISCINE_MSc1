@@ -1,3 +1,4 @@
+import { computed } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 import { useAuthStore } from '@/stores/authStore'
@@ -16,6 +17,7 @@ import CreateWorkingTime from './components/workingTime/CreateWorkingTime.vue'
 import WorkingTimeManager from './components/workingTime/WorkingTimeManager.vue'
 import WorkingTimes from './components/workingTimes/WorkingTimes.vue'
 
+
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -24,7 +26,7 @@ const router = createRouter({
       component: Layout,
       children: [
         { path: '/', name: 'home', component: Home },
-        { path: '/account', name: 'account', component: Account },
+        { path: '/account/:userId', name: 'account', component: Account },
         { path: '/clock/:userId', name: 'clock', component: ClockManager },
         {
           path: '/working-times/:userId',

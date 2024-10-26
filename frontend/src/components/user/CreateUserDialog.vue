@@ -27,7 +27,9 @@ const isLoading = ref(false)
 
 const schema = z.object({
   username: z.string().min(3).max(255),
-  email: z.string().email()
+  email: z.string().email(),
+  password: z.string().min(12).max(72).optional(),
+  password_confirmation: z.string().min(12).max(72).optional()
 })
 
 const form = useForm({
