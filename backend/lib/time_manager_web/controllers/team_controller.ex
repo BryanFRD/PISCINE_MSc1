@@ -4,6 +4,7 @@ defmodule TimeManagerWeb.TeamController do
   alias TimeManager.Teams
   alias TimeManager.Teams.Team
   alias TimeManager.Users.Guardian
+  alias TimeManager.Repo
 
   action_fallback TimeManagerWeb.FallbackController
 
@@ -18,6 +19,19 @@ defmodule TimeManagerWeb.TeamController do
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/teams/#{team}")
       |> render(:show, team: team)
+    end
+  end
+
+  def users_by_team(conn, %{"team_id" => team_id}) do
+    team = Teams.get_team!(team_id) |> Repo.preload(:users)
+
+    if team do
+      users = team.users
+      json(conn, users)
+    else
+      conn
+      |> put_status(:not_found)
+      |> render(:error, message: "Team not found")
     end
   end
 

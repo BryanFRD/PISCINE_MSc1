@@ -53,7 +53,7 @@ export const columns = [
     },
     cell: ({ row }) => {
       const value = row.getValue('start')
-      const date = format(new Date(value), 'MMMM dd, yyyy hh:mm:ss aa')
+      const date = format(new Date(value), 'MMMM dd, yyyy HH:mm:ss ')
       return h('div', date)
     }
   },
@@ -79,7 +79,7 @@ export const columns = [
     },
     cell: ({ row }) => {
       const value = row.getValue('end')
-      const date = format(new Date(value), 'MMMM dd, yyyy hh:mm:ss aa')
+      const date = format(new Date(value), 'MMMM dd, yyyy HH:mm:ss ')
       return h('div', date)
     }
   },

@@ -1,4 +1,7 @@
+import { computed } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
+
+import { useAuthStore } from '@/stores/authStore'
 
 import Login from './components/auth/Login.vue'
 import Public from './components/auth/Public.vue'
@@ -7,10 +10,14 @@ import ChartManager from './components/chartManager/ChartManager.vue'
 import ClockManager from './components/clocks/ClockManager.vue'
 import Home from './components/home/Home.vue'
 import Layout from './components/layout/Layout.vue'
+import TeamManager from './components/team/TeamManager.vue'
 import Account from './components/user/Account.vue'
+import AllUsers from './components/Users/AllUsers.vue'
 import CreateWorkingTime from './components/workingTime/CreateWorkingTime.vue'
 import WorkingTimeManager from './components/workingTime/WorkingTimeManager.vue'
 import WorkingTimes from './components/workingTimes/WorkingTimes.vue'
+import TeamFocus from './components/team/TeamFocus.vue'
+
 
 const router = createRouter({
   history: createWebHistory(),
@@ -20,7 +27,7 @@ const router = createRouter({
       component: Layout,
       children: [
         { path: '/', name: 'home', component: Home },
-        { path: '/account', name: 'account', component: Account },
+        { path: '/account/:userId', name: 'account', component: Account },
         { path: '/clock/:userId', name: 'clock', component: ClockManager },
         {
           path: '/working-times/:userId',
@@ -41,6 +48,24 @@ const router = createRouter({
           path: '/chart-manager/:userId',
           name: 'chart-manager',
           component: ChartManager
+        },
+        {
+          path: '/user-manager/',
+          name: 'user-manager',
+          component: AllUsers,
+          meta: { requiresAdmin: true }
+        },
+        {
+          path: '/team-manager/',
+          name: 'team-manager',
+          component: TeamManager,
+          meta: { requiresAdmin: true }
+        },
+        {
+          path: '/team-focus/:teamId',
+          name: 'team-focus',
+          component: TeamFocus,
+          meta: { requiresAdmin: true }
         }
       ]
     },

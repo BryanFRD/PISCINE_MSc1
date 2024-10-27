@@ -6,7 +6,7 @@ const envUrl = import.meta.env.VITE_API_URL
 export const instance = axios.create({
   baseURL:
     envUrl ||
-    (isProd ? 'http://35.226.221.251:4001/api' : 'http://localhost:4005/api'),
+    (isProd ? 'http://35.226.221.251:4001/api' : 'http://localhost:4001/api'),
   headers: {
     'Content-Type': 'application/json'
   }

@@ -2,7 +2,7 @@
 import { add, format, isSameDay } from 'date-fns'
 import { enUS } from 'date-fns/locale'
 import { DatePicker } from 'v-calendar'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
 import { instance } from '@/api/instance'
@@ -11,24 +11,46 @@ import 'v-calendar/style.css'
 
 const route = useRoute()
 const wkTs = ref([])
-const workingTimes = ref([])
 const workingTimesLoading = ref(false)
 const workingTimesError = ref(null)
+const users = ref([])
+const userColors = ref({})
+
+const getTeamDetails = async teamId => {
+  try {
+    const result = await instance.get(`/teams/${teamId}`)
+    users.value = result.data.users
+  } catch {
+    workingTimesError.value = `Failed to fetch team details`
+  }
+}
 
 const getWorkingTimes = async userId => {
-  workingTimesLoading.value = true
-  workingTimesError.value = null
-
   try {
     const result = await instance.get(
       `/workingtimes/${userId}?order_by=start&order=asc`
     )
-    workingTimes.value = result.data
+    return result.data
   } catch {
-    workingTimesError.value = `Failed to fetch WorkingTimes`
-  } finally {
-    workingTimesLoading.value = false
+    workingTimesError.value = `Failed to fetch working times for user ${userId}`
+    return []
   }
+}
+
+const fetchAllWorkingTimes = async () => {
+  const allWorkingTimes = []
+  for (const user of users.value) {
+    const workingTimes = await getWorkingTimes(user.id)
+    allWorkingTimes.push(...workingTimes)
+  }
+  return allWorkingTimes
+}
+
+const assignUserColors = () => {
+  const colors = ['red', 'blue', 'yellow', 'green', 'purple', 'orange', 'pink']
+  users.value.forEach((user, index) => {
+    userColors.value[user.id] = colors[index % colors.length]
+  })
 }
 
 const formatWorkingTimeForCalendar = workingTimes => {
@@ -36,13 +58,12 @@ const formatWorkingTimeForCalendar = workingTimes => {
     return []
   }
 
-  const colors = ['red', 'blue', 'yellow', 'green', 'purple', 'black', 'purple']
-  return workingTimes.map((item, index) => ({
+  return workingTimes.map(item => ({
     key: item.id,
     dot: true,
     dates: new Date(item.start),
     description: `${item.user.username}'s work: ${format(new Date(item.start), 'HH:mm')} - ${format(new Date(item.end), 'HH:mm')}`,
-    color: 'black'
+    color: userColors.value[item.user.id] || 'black'
   }))
 }
 
@@ -66,20 +87,15 @@ const workingTimesForDay = computed(() =>
   wkTs.value.filter(wkT => isSameDay(wkT.dates, today.value))
 )
 
-watch(
-  () => route.params.userId,
-  userId => {
-    getWorkingTimes(userId)
-  }
-)
-
-onMounted(() => {
-  const userId = route.params.userId
-  getWorkingTimes(userId).then(() => {
-    wkTs.value = formatWorkingTimeForCalendar(workingTimes.value)
-  })
+onMounted(async () => {
+  const teamId = route.params.teamId
+  await getTeamDetails(teamId)
+  assignUserColors()
+  const allWorkingTimes = await fetchAllWorkingTimes()
+  wkTs.value = formatWorkingTimeForCalendar(allWorkingTimes)
 })
 </script>
+
 <template>
   <div class="flex justify-between space-x-10">
     <div class="left w-1/2">
@@ -94,7 +110,7 @@ onMounted(() => {
     <div class="right w-1/2">
       <div v-if="workingTimesForDay.length">
         <h2 class="mb-4 text-2xl font-bold">
-          WorkingTimes for {{ formattedDateToDay(today) }}
+          Working Times for {{ formattedDateToDay(today) }}
         </h2>
         <ul>
           <li v-for="(wkT, index) in workingTimesForDay" :key="index">
@@ -103,7 +119,7 @@ onMounted(() => {
         </ul>
       </div>
       <div v-else>
-        <h2 class="mb-4 text-2xl font-bold">No workingTimes for this day.</h2>
+        <h2 class="mb-4 text-2xl font-bold">No working times for this day.</h2>
       </div>
     </div>
   </div>

@@ -123,6 +123,9 @@ defmodule TimeManagerWeb.UserController do
     response(404, "User not found")
   end
 
+
+
+
   def update(conn, %{"id" => id} = user_params) do
     current_user = Guardian.Plug.current_resource(conn)
     user = Users.get_user!(id)

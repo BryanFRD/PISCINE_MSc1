@@ -18,7 +18,7 @@ import {
   subDays
 } from 'date-fns'
 import { enUS } from 'date-fns/locale'
-import { Loader2 } from 'lucide-vue-next'
+import { Loader2, LogIn } from 'lucide-vue-next'
 import { computed, onMounted, ref, watch } from 'vue'
 import { Bar } from 'vue-chartjs'
 import { useRoute } from 'vue-router'
@@ -32,12 +32,10 @@ const workingTimes = ref([])
 const workingTimesLoading = ref(false)
 const workingTimesError = ref(null)
 const dm = add(new Date(), { days: 1 })
-const today = new Date()
 
 const getWorkingTimes = async userId => {
   workingTimesLoading.value = true
   workingTimesError.value = null
-
   try {
     const result = await instance.get(
       `/workingtimes/${userId}?order_by=start&order=asc&start=${subDays(new Date(), 7).toISOString()}&end=${dm.toISOString()}`
@@ -64,20 +62,19 @@ const lastDaysName = () => {
 }
 
 const workHoursPerDay = computed(() => {
-  const hours = Array(7).fill(0) // Initialise un tableau de 7 jours
-  const today = new Date() // Récupère la date actuelle
+  const hours = Array(7).fill(0)
+  const today = new Date()
 
   workingTimes.value.forEach(time => {
     const startDate = new Date(time.start)
     const endDate = new Date(time.end)
 
-    // Calculer la différence de jours entre aujourd'hui et la date de début
     const dayDiff = differenceInCalendarDays(today, startDate)
 
-    // Si la différence est entre 0 (aujourd'hui) et 6 (il y a 6 jours)
     if (dayDiff >= 0 && dayDiff < 7) {
       const minutesWorked = differenceInMinutes(endDate, startDate)
-      hours[6 - dayDiff] += minutesWorked / 60 // Ajouter les heures au bon jour
+
+      hours[6 - dayDiff] += minutesWorked / 60
     }
   })
 

@@ -39,6 +39,7 @@ defmodule TimeManager.Users.User do
     end
   end
 
+
   defp maybe_validate_email(changeset) do
     if get_change(changeset, :email) do
       changeset
