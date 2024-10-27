@@ -16,6 +16,7 @@ import AllUsers from './components/Users/AllUsers.vue'
 import CreateWorkingTime from './components/workingTime/CreateWorkingTime.vue'
 import WorkingTimeManager from './components/workingTime/WorkingTimeManager.vue'
 import WorkingTimes from './components/workingTimes/WorkingTimes.vue'
+import TeamFocus from './components/team/TeamFocus.vue'
 
 
 const router = createRouter({
@@ -58,6 +59,12 @@ const router = createRouter({
           path: '/team-manager/',
           name: 'team-manager',
           component: TeamManager,
+          meta: { requiresAdmin: true }
+        },
+        {
+          path: '/team-focus/:teamId',
+          name: 'team-focus',
+          component: TeamFocus,
           meta: { requiresAdmin: true }
         }
       ]

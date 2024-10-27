@@ -1,7 +1,7 @@
 <script setup>
-import { Eye, Loader2, Plus, Trash2 } from 'lucide-vue-next' // Import de l'icône Eye
+import { Eye, Loader2, Pencil, Plus, Trash2 } from 'lucide-vue-next'
 import { computed, onMounted, ref, watch } from 'vue'
-import { useRouter } from 'vue-router' // Import du router
+import { useRouter } from 'vue-router'
 
 import { instance } from '@/api/instance'
 import { Button } from '@/components/ui/button'
@@ -22,7 +22,7 @@ const userLoading = ref(false)
 const userError = ref(null)
 const userF = ref([])
 
-const router = useRouter() // Création de l'instance du router
+const router = useRouter()
 
 const getUser = async () => {
   userLoading.value = true
@@ -56,7 +56,7 @@ onMounted(() => {
     </CreateUserDialog>
   </div>
 
-  <div class="mt-4"> <!-- Ajout d'une marge supérieure ici -->
+  <div class="mt-4">
     <p v-if="userLoading">Chargement en cours...</p>
     <p v-if="userError">{{ userError }}</p>
     <Table v-else>
@@ -75,9 +75,15 @@ onMounted(() => {
           <TableCell>
             <Button
               variant="ghost"
-              @click="() => router.push(`/account/${user.id}`)"
+              @click="() => router.push(`/chart-manager/${user.id}`)"
             >
               <Eye class="size-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              @click="() => router.push(`/account/${user.id}`)"
+            >
+              <Pencil class="size-4" />
             </Button>
           </TableCell>
         </TableRow>

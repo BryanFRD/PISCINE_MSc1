@@ -1,17 +1,21 @@
 <script setup>
+import { Eye, Loader2, Plus, Trash2 } from 'lucide-vue-next'
 import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 import { instance } from '@/api/instance'
+import { Button } from '@/components/ui/button'
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
-  TableCaption
+  TableRow
 } from '@/components/ui/table'
 
+const router = useRouter()
 const loading = ref(false)
 const error = ref(null)
 const teams = ref([])
@@ -66,6 +70,14 @@ onMounted(() => {
                 {{ user.username }} ({{ user.email }})
               </li>
             </ul>
+          </TableCell>
+          <TableCell>
+            <Button
+              variant="ghost"
+              @click="() => router.push(`/team-focus/${team.id}`)"
+            >
+              <Eye class="size-4" />
+            </Button>
           </TableCell>
         </TableRow>
       </TableBody>

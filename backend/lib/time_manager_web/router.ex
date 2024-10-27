@@ -39,6 +39,7 @@ defmodule TimeManagerWeb.Router do
 
     # Teams
     resources "/teams", TeamController, except: [:new, :edit]
+    get "/:team_id/users", TeamController, :users_by_team
   end
 
   def swagger_info do
