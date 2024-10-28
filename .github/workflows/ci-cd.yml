@@ -64,7 +64,8 @@ jobs:
     - name: Create and migrate database
       run: |
         cd backend
-        mix ecto.setup
+        mix ecto.create
+        mix ecto.migrate
 
     - name: Run tests
       run: |
