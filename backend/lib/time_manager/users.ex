@@ -9,6 +9,7 @@ defmodule TimeManager.Users do
 
   alias TimeManager.Users.User
   alias TimeManager.Clocks.Clock
+  alias TimeManager.Teams
 
   @doc """
   Returns the list of users.
@@ -56,10 +57,26 @@ defmodule TimeManager.Users do
   """
   def get_user!(id), do: Repo.get!(User, id)
 
+  @doc """
+  Gets a single user.
+
+  Returns `nil` if the User does not exist.
+
+  ## Examples
+
+      iex> get_user(123)
+      %User{}
+
+      iex> get_user(456)
+      nil
+
+  """
   def get_user(id), do: Repo.get(User, id)
 
   @doc """
   Creates a user.
+
+  Creates a user and a clock for the user.
 
   ## Examples
 
@@ -82,16 +99,16 @@ defmodule TimeManager.Users do
 
   ## Examples
 
-      iex> update_user(user, %{field: new_value})
+      iex> update_user(user, %{field: new_value}, current_user)
       {:ok, %User{}}
 
-      iex> update_user(user, %{field: bad_value})
+      iex> update_user(user, %{field: bad_value}, current_user)
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_user(%User{} = user, attrs) do
+  def update_user(%User{} = user, attrs, current_user \\ nil) do
     user
-    |> User.changeset(attrs)
+    |> User.changeset(attrs, current_user)
     |> Repo.update()
   end
 
@@ -124,11 +141,29 @@ defmodule TimeManager.Users do
     User.changeset(user, attrs)
   end
 
+  @doc """
+  Generates a token for a user.
+
+  ## Examples
+
+      iex> generate_token(user)
+      {:ok, token}
+
+  """
   def generate_token(user) do
     {:ok, token, _claims} = Guardian.encode_and_sign(user)
     {:ok, token}
   end
 
+  @doc """
+  Authenticates a user.
+
+  ## Examples
+
+      iex> authenticate_user(email, password)
+      {:ok, %{user: user, token: token}}
+
+  """
   def authenticate_user(email, password) do
     user = Repo.one(from(u in User, where: u.email == ^email))
 
@@ -146,4 +181,60 @@ defmodule TimeManager.Users do
         end
     end
   end
+
+  @doc """
+  Checks if a user can manage another user.
+
+  ## Examples
+
+      iex> can_manager_user?(manager, user)
+      true
+
+  """
+  def can_manager_user?(%User{id: user_id1}, %User{id: user_id2}) when user_id1 == user_id2,
+    do: true
+
+  def can_manager_user?(%User{role: "admin"}, _), do: true
+
+  def can_manager_user?(manager, user) do
+    if Teams.is_user_manager?(manager, user) do
+      true
+    else
+      false
+    end
+  end
+
+  @doc """
+  Checks if a manager can manage another user.
+
+  ## Examples
+
+      iex> manager_can_manager_user?(manager, user)
+      true
+
+  """
+  def manager_can_manager_user?(%User{role: "admin"}, _), do: true
+
+  def manager_can_manager_user?(manager, user) do
+    if Teams.is_user_manager?(manager, user) do
+      true
+    else
+      false
+    end
+  end
+
+  @doc """
+  Checks if a user can manage himself.
+
+  ## Examples
+
+      iex> user_can_manager_user?(manager, user)
+      true
+
+  """
+  def user_can_manager_user?(%User{id: user_id1}, %User{id: user_id2}) when user_id1 == user_id2,
+    do: true
+
+  def user_can_manager_user?(%User{role: "admin"}, _), do: true
+  def user_can_manager_user?(_, _), do: false
 end

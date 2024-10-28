@@ -16,7 +16,8 @@ The goal of this project is to create a platform-independent API for exchanging 
 - [`Erlang VM (Windows)`](https://www.erlang.org/downloads.html)
 - [`Elixir`](https://elixir-lang.org/install.html)
 - [`Phoenix Framework`](https://hexdocs.pm/phoenix/up_and_running.html)
-- [`Docker`](https://www.docker.com/products/docker-desktop/)
+- [`Docker`](https://www.docker.com/products/docker-desktop/) 
+- [`Visual Studio`](https://visualstudio.microsoft.com/fr/visual-cpp-build-tools/)
 
 Clone the project :
 

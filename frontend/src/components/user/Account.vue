@@ -3,6 +3,7 @@ import { toTypedSchema } from '@vee-validate/zod'
 import { Loader2, Plus, Trash2 } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import { computed, onMounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { toast } from 'vue-sonner'
 import { z } from 'zod'
 
@@ -16,11 +17,13 @@ import CreateUserDialog from './CreateUserDialog.vue'
 import DeleteUserDialog from './DeleteUserDialog.vue'
 
 const authStore = useAuthStore()
+const route = useRoute()
 
 const user = computed(() => authStore.user)
-
+const userF = ref([])
 const isLoading = ref(false)
-
+const userLoading = ref(false)
+const userError = ref(null)
 const schema = z.object({
   email: z.string().email().max(160),
   username: z.string().min(3).max(30),
@@ -32,14 +35,26 @@ const form = useForm({
   validationSchema: toTypedSchema(schema)
 })
 
+const getUser = async userId => {
+  userLoading.value = true
+  userError.value = null
+  try {
+    const result = await instance.get(`/users/${userId}`)
+    userF.value = result.data
+  } catch {
+    userError.value = `Failed to fetch user`
+  } finally {
+    userLoading.value = false
+  }
+}
+
 const onSubmit = async values => {
   isLoading.value = true
 
   try {
-    const result = await instance.put(`/users/${user.value.id}`, values)
+    const result = await instance.put(`/users/${route.params.userId}`, values)
 
     authStore.user = result.data
-
     toast.success('User updated successfully')
   } catch (result) {
     form.setErrors(result.response.data.errors)
@@ -49,12 +64,13 @@ const onSubmit = async values => {
 }
 
 watch(
-  () => user.value,
-  () => form.setValues(user.value)
+  () => userF.value,
+  () => form.setValues(userF.value)
 )
 onMounted(() => {
-  if (user.value) {
-    form.setValues(user.value)
+  getUser(route.params.userId)
+  if (userF.value) {
+    form.setValues(userF.value)
   }
 })
 </script>
@@ -84,27 +100,22 @@ onMounted(() => {
   >
     <Button type="submit" :disabled="isLoading">
       <Loader2 v-if="isLoading" class="size-4 animate-spin" />
-      <span>Update my account</span>
+      <span>Update account</span>
     </Button>
   </AutoForm>
 
-  <Separator class="mb-4 mt-8" />
+  <div v-if="authStore?.user?.role === 'admin'">
+    <Separator class="mb-4 mt-8" />
 
-  <h3 class="mb-4 text-2xl font-semibold">Actions</h3>
+    <h3 class="mb-4 text-2xl font-semibold">Actions</h3>
 
-  <div class="flex items-center gap-x-2">
-    <CreateUserDialog>
-      <Button>
-        <Plus class="size-4" />
-        <span>Create a user</span>
-      </Button>
-    </CreateUserDialog>
-
-    <DeleteUserDialog v-if="user" :user-id="user.id">
-      <Button variant="destructive">
-        <Trash2 class="size-4" />
-        <span>Delete my account</span>
-      </Button>
-    </DeleteUserDialog>
+    <div class="flex items-center gap-x-2">
+      <DeleteUserDialog v-if="user" :user-id="user.id">
+        <Button variant="destructive">
+          <Trash2 class="size-4" />
+          <span>Delete this account</span>
+        </Button>
+      </DeleteUserDialog>
+    </div>
   </div>
 </template>

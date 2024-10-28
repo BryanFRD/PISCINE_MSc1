@@ -12,7 +12,9 @@ defmodule TimeManager.UsersFixtures do
       attrs
       |> Enum.into(%{
         email: "john.doe@email.com",
-        username: "john_doe"
+        username: "john_doe",
+        password: "Testyy1234!?",
+        password_confirmation: "Testyy1234!?"
       })
       |> TimeManager.Users.create_user()
 

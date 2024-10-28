@@ -1,5 +1,6 @@
 <script setup>
-import { format } from 'date-fns'
+import { add, format } from 'date-fns'
+import { formatInTimeZone } from 'date-fns-tz'
 import { Loader2 } from 'lucide-vue-next'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
@@ -47,7 +48,7 @@ const submitClock = async () => {
   try {
     await instance.put(`/clocks/${userId.value}`, {
       status: !clock.value.status,
-      time: new Date().toISOString()
+      time: add(new Date(), { hours: 2 }).toISOString()
     })
 
     getClock(userId)
@@ -55,7 +56,10 @@ const submitClock = async () => {
     toast.success('Clock submitted')
 
     if (clock.value.status) {
-      submitWorkingTime(clock.value.time, new Date())
+      submitWorkingTime(
+        clock.value.time,
+        add(new Date(), { hours: 2 }).toISOString()
+      )
     }
   } catch {
     toast.error('Failed to submit clock')
@@ -67,7 +71,7 @@ const submitClock = async () => {
 const submitWorkingTime = async (start, end) => {
   try {
     await instance.post(`/workingtimes/${userId.value}`, {
-      start: new Date(start).toISOString(),
+      start: add(new Date(start), { hours: 2 }).toISOString(),
       end: new Date(end).toISOString()
     })
 
@@ -103,6 +107,7 @@ onMounted(() => getClock())
     <div v-else class="space-y-2">
       <p>
         Last clock:
+
         {{ format(new Date(clock.time), 'MMMM dd, yyyy hh:mm:ss aa') }}
       </p>
 

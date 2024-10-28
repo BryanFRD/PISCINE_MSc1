@@ -1,15 +1,21 @@
 meta {
-  name: List user workingtimes
+  name: Update team
   type: http
-  seq: 1
+  seq: 3
 }
 
-get {
-  url: {{api_url}}/workingtimes/2
-  body: none
+put {
+  url: {{api_url}}/teams/1
+  body: json
   auth: none
 }
 
 headers {
   Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0aW1lX21hbmFnZXIiLCJleHAiOjE3MzE1OTIxMDEsImlhdCI6MTcyOTE3MjkwMSwiaXNzIjoidGltZV9tYW5hZ2VyIiwianRpIjoiMmRkMTFmZGMtOTNmMC00YTM0LWI2YzItYjk1YWM1YzFjMTc5IiwibmJmIjoxNzI5MTcyOTAwLCJzdWIiOiIzIiwidHlwIjoiYWNjZXNzIn0.bNwjmCfu5WcLvKIaXxHDmnXHZIGhHQjnrRGFtjpHMohu1EF3KaUksdKtKEaNnIFRrRQK5Lisy0qVQXWPCJZKGg
+}
+
+body:json {
+  {
+    "user_ids": [3]
+  }
 }

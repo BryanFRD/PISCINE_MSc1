@@ -1,6 +1,6 @@
 <script setup>
 import { toTypedSchema } from '@vee-validate/zod'
-import { Edit3, Loader2 } from 'lucide-vue-next'
+import { Edit3, Loader2, Replace } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -53,8 +53,7 @@ const onSubmit = async values => {
 
     const result = await instance.post(`/workingtimes/${userId.value}`, body)
 
-    router.push(`working-time/${userId.value}/${result.data.id}`)
-
+    router.back()
     isOpen.value = false
     toast.success('Working time created successfully')
   } catch (result) {

@@ -4,6 +4,7 @@ defmodule TimeManagerWeb.UserController do
 
   alias TimeManager.Users
   alias TimeManager.Users.User
+  alias TimeManager.Users.Guardian
 
   action_fallback TimeManagerWeb.FallbackController
 
@@ -52,8 +53,15 @@ defmodule TimeManagerWeb.UserController do
   end
 
   def index(conn, params) do
+    current_user = Guardian.Plug.current_resource(conn)
     users = Users.list_users(params)
-    render(conn, :index, users: users)
+
+    filtered_users =
+      Enum.filter(users, fn user ->
+        Users.can_manager_user?(current_user, user)
+      end)
+
+    render(conn, :index, users: filtered_users)
   end
 
   swagger_path :index do
@@ -91,8 +99,16 @@ defmodule TimeManagerWeb.UserController do
   end
 
   def show(conn, %{"id" => id}) do
+    current_user = Guardian.Plug.current_resource(conn)
     user = Users.get_user!(id)
-    render(conn, :show, user: user)
+
+    if Users.can_manager_user?(current_user, user) do
+      render(conn, :show, user: user)
+    else
+      conn
+      |> put_status(:forbidden)
+      |> render(:error, message: "You are not allowed to see this user")
+    end
   end
 
   swagger_path :show do
@@ -107,11 +123,21 @@ defmodule TimeManagerWeb.UserController do
     response(404, "User not found")
   end
 
+
+
+
   def update(conn, %{"id" => id} = user_params) do
+    current_user = Guardian.Plug.current_resource(conn)
     user = Users.get_user!(id)
 
-    with {:ok, %User{} = user} <- Users.update_user(user, user_params) do
-      render(conn, :show, user: user)
+    if Users.user_can_manager_user?(current_user, user) do
+      with {:ok, %User{} = user} <- Users.update_user(user, user_params, current_user) do
+        render(conn, :show, user: user)
+      end
+    else
+      conn
+      |> put_status(:forbidden)
+      |> render(:error, message: "You are not allowed to modify this user")
     end
   end
 
@@ -131,10 +157,17 @@ defmodule TimeManagerWeb.UserController do
   end
 
   def delete(conn, %{"id" => id}) do
+    current_user = Guardian.Plug.current_resource(conn)
     user = Users.get_user!(id)
 
-    with {:ok, %User{}} <- Users.delete_user(user) do
-      send_resp(conn, :no_content, "")
+    if Users.user_can_manager_user?(current_user, user) do
+      with {:ok, %User{}} <- Users.delete_user(user) do
+        send_resp(conn, :no_content, "")
+      end
+    else
+      conn
+      |> put_status(:forbidden)
+      |> render(:error, message: "You are not allowed to delete this user")
     end
   end
 

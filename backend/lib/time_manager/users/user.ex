@@ -8,20 +8,25 @@ defmodule TimeManager.Users.User do
     field :password, :string, virtual: true, redact: true
     field :password_confirmation, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
+    field :role, :string, default: "user"
 
     has_one :clock, TimeManager.Clocks.Clock
     has_many :workingtimes, TimeManager.Workingtimes.Workingtime
+
+    many_to_many :teams, TimeManager.Teams.Team, join_through: "teams_users"
+    many_to_many :managed_teams, TimeManager.Teams.Team, join_through: "teams_managers"
 
     timestamps(type: :utc_datetime)
   end
 
   @doc false
-  def changeset(user, attrs) do
+  def changeset(user, attrs, current_user \\ nil) do
     user
     |> cast(attrs, [:username, :email, :password, :password_confirmation])
     |> maybe_validate_username()
     |> maybe_validate_email()
     |> maybe_validate_password()
+    |> maybe_validate_role(current_user)
   end
 
   defp maybe_validate_username(changeset) do
@@ -33,6 +38,7 @@ defmodule TimeManager.Users.User do
       changeset
     end
   end
+
 
   defp maybe_validate_email(changeset) do
     if get_change(changeset, :email) do
@@ -74,6 +80,19 @@ defmodule TimeManager.Users.User do
       |> validate_length(:password, max: 72, count: :bytes)
       |> put_change(:hashed_password, Bcrypt.hash_pwd_salt(password))
       |> delete_change(:password)
+    else
+      changeset
+    end
+  end
+
+  defp maybe_validate_role(changeset, current_user) do
+    if current_user && current_user.role == "admin" do
+      if get_change(changeset, :role) do
+        changeset
+        |> validate_inclusion(:role, ["user", "admin"])
+      else
+        changeset
+      end
     else
       changeset
     end

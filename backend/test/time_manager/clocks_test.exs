@@ -9,7 +9,7 @@ defmodule TimeManager.ClocksTest do
     import TimeManager.ClocksFixtures
     import TimeManager.UsersFixtures
 
-    @invalid_attrs %{status: nil, time: nil, user_id: nil}
+    @invalid_attrs %{status: nil, time: "nottime", user_id: nil}
 
     setup do
       user = user_fixture()

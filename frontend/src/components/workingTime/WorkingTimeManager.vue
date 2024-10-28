@@ -16,9 +16,12 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
+import { useAuthStore } from '@/stores/authStore'
 
 import DeleteWorkingTimeDialog from './DeleteWorkingTimeDialog.vue'
 import EditWorkingTimeDialog from './EditWorkingTimeDialog.vue'
+
+const authStore = useAuthStore()
 
 const route = useRoute()
 
@@ -84,49 +87,47 @@ onMounted(() => getWorkingTime())
       <TableBody>
         <TableRow>
           <TableCell class="text-center">
-            {{
-              format(new Date(workingTime.start), 'MMMM dd, yyyy hh:mm:ss aa')
-            }}
+            {{ format(new Date(workingTime.start), 'MMMM dd, yyyy HH:mm:ss ') }}
           </TableCell>
           <TableCell class="text-center">
-            {{ format(new Date(workingTime.end), 'MMMM dd, yyyy hh:mm:ss aa') }}
+            {{ format(new Date(workingTime.end), 'MMMM dd, yyyy HH:mm:ss ') }}
           </TableCell>
         </TableRow>
       </TableBody>
     </Table>
 
-    <Separator class="mb-4 mt-8" />
+    <div v-if="authStore?.user?.role === 'admin'">
+      <h3 class="mb-4 text-2xl font-semibold">Actions</h3>
 
-    <h3 class="mb-4 text-2xl font-semibold">Actions</h3>
+      <div class="flex items-center gap-x-2">
+        <RouterLink
+          :to="{
+            name: 'working-time-create',
+            params: { userId }
+          }"
+          :class="buttonVariants()"
+        >
+          <Plus class="size-4" />
+          <span>Create a working time</span>
+        </RouterLink>
 
-    <div class="flex items-center gap-x-2">
-      <RouterLink
-        :to="{
-          name: 'working-time-create',
-          params: { userId }
-        }"
-        :class="buttonVariants()"
-      >
-        <Plus class="size-4" />
-        <span>Create a working time</span>
-      </RouterLink>
+        <EditWorkingTimeDialog
+          :working-time="workingTime"
+          :on-success="() => getWorkingTime()"
+        >
+          <Button>
+            <Edit3 class="size-4" />
+            <span>Edit</span>
+          </Button>
+        </EditWorkingTimeDialog>
 
-      <EditWorkingTimeDialog
-        :working-time="workingTime"
-        :on-success="() => getWorkingTime()"
-      >
-        <Button>
-          <Edit3 class="size-4" />
-          <span>Edit</span>
-        </Button>
-      </EditWorkingTimeDialog>
-
-      <DeleteWorkingTimeDialog>
-        <Button variant="destructive">
-          <Trash2 class="size-4" />
-          <span>Delete</span>
-        </Button>
-      </DeleteWorkingTimeDialog>
+        <DeleteWorkingTimeDialog>
+          <Button variant="destructive">
+            <Trash2 class="size-4" />
+            <span>Delete</span>
+          </Button>
+        </DeleteWorkingTimeDialog>
+      </div>
     </div>
   </template>
 </template>

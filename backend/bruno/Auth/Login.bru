@@ -7,7 +7,11 @@ meta {
 post {
   url: {{api_url}}/auth/login
   body: json
-  auth: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0aW1lX21hbmFnZXIiLCJleHAiOjE3MzIyNzA1MjMsImlhdCI6MTcyOTg1MTMyMywiaXNzIjoidGltZV9tYW5hZ2VyIiwianRpIjoiOTNhZWMxNjEtNDIzNy00ZDA3LTlmZWUtZTIzNGE5YjAzMDA3IiwibmJmIjoxNzI5ODUxMzIyLCJzdWIiOiI2IiwidHlwIjoiYWNjZXNzIn0.DZyhhzmU4JugyRjT9vnNZLH4P-_9uvp_0HbUR4sa7BU5HtQsZMbe7ahJ9tr_7LGoPfOf6dDjpvCrC7d_jaYjaQ
 }
 
 body:json {

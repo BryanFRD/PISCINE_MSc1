@@ -8,9 +8,17 @@ import {
   Title,
   Tooltip
 } from 'chart.js'
-import { add, differenceInMinutes, format, subDays } from 'date-fns'
+//to accumulate working hours per day
+import {
+  add,
+  differenceInCalendarDays,
+  differenceInMinutes,
+  format,
+  getDay,
+  subDays
+} from 'date-fns'
 import { enUS } from 'date-fns/locale'
-import { Loader2 } from 'lucide-vue-next'
+import { Loader2, LogIn } from 'lucide-vue-next'
 import { computed, onMounted, ref, watch } from 'vue'
 import { Bar } from 'vue-chartjs'
 import { useRoute } from 'vue-router'
@@ -24,10 +32,10 @@ const workingTimes = ref([])
 const workingTimesLoading = ref(false)
 const workingTimesError = ref(null)
 const dm = add(new Date(), { days: 1 })
+
 const getWorkingTimes = async userId => {
   workingTimesLoading.value = true
   workingTimesError.value = null
-
   try {
     const result = await instance.get(
       `/workingtimes/${userId}?order_by=start&order=asc&start=${subDays(new Date(), 7).toISOString()}&end=${dm.toISOString()}`
@@ -52,16 +60,24 @@ const lastDaysName = () => {
   }
   return daysList.reverse()
 }
-//to accumulate working hours per day
+
 const workHoursPerDay = computed(() => {
   const hours = Array(7).fill(0)
+  const today = new Date()
+
   workingTimes.value.forEach(time => {
     const startDate = new Date(time.start)
     const endDate = new Date(time.end)
-    const dayIndex = startDate.getDay()
-    const minutesWorked = differenceInMinutes(endDate, startDate)
-    hours[dayIndex] += minutesWorked / 60
+
+    const dayDiff = differenceInCalendarDays(today, startDate)
+
+    if (dayDiff >= 0 && dayDiff < 7) {
+      const minutesWorked = differenceInMinutes(endDate, startDate)
+
+      hours[6 - dayDiff] += minutesWorked / 60
+    }
   })
+
   return hours
 })
 
